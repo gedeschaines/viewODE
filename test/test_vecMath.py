@@ -1,5 +1,10 @@
+#!/usr/bin/env python2.7
 
-from math    import *
+from sys import path
+from math import *
+
+path.insert(0,'..')
+
 from vecMath import *
 
 posX    = (1.0, 0.0, 0.0)
