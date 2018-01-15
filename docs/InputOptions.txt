@@ -1,0 +1,93 @@
+Main Simulation
+---------------
+
+  Key Press Options:
+    Esc = Exit simulation
+    A   = Assemble figure
+    G   = Toggle Render debug On/Off
+    H   = Toggle Actions debug On/Off
+    J   = Toggle Control debug On/Off
+    X   = Reset simulation
+    Z   = Toggle simulation pause On/Off
+  
+  Mouse Button and Motion Options:
+    Left = Grab object (see Render class below.)
+      With figure joint selected and figure collapsed, 
+        apply force to joint solid in direction of mouse 
+        motion.
+      With figure solid selected, apply force to solid
+        in direction of mouse motion.
+      With target selected, apply force in direction of 
+        mouse motion.
+    Middle = (See Render class below.)
+    Right  = Pause simulation while pressed.
+
+Frame Class
+-----------
+
+  Key Press Options:
+    B = Toggle ball joints On/Off
+    C = Collapse frame
+    F = Toggle joint and motor feedback On/Off
+    S = Toggle slim arm and leg bones On/Off
+    
+    Note, pressing the B or S key will reset the figure's 
+    animation state (i.e., standing up using zero error 
+    restoring torques).
+    
+Actions Class
+-------------
+
+  Key Press Options:
+    Space = Toggle suspend mode On/Off
+    Y     = Toggle stride test mode On/Off
+    K     = Toggle kick action On/Off
+    R     = Toggle reach action On/Off
+    U     = Toggle stand up action On/Off
+    W     = Toggle walking action On/Off
+  
+    Note, the kick action is initiated when the target object
+    is selected and the figure has at least one foot on the 
+    ground plane.  The reach action is directed toward the 
+    target object, which can be grabbed and moved using the
+    left mouse button.
+    
+Control Class
+-------------
+
+  Key Press Options:
+    0 = Toggle torque mode Off/On
+    1 = Set torque mode On and forcing torque axis to 0
+    2 = Set torque mode On and forcing torque axis to 1
+    3 = Set torque mode On and forcing torque axis to 2 (default)
+    + = Set forcing torque to positive direction (default)
+    - = Set forcing torque to negative direction
+    D = Toggle joint rotational damping On/Off
+    E = Toggle zero error restoring torque Off/On
+    L = Toggle non-forcing axis rotation error limiting On/Off
+    T = Toggle torque feedback rotational damping Off/On
+  
+  Mouse Button and Motion Options:
+    Left = Apply forcing torque to selected joint
+      With the figure assembled and torque mode on, rotate 
+      selected joint about the forcing torque axis.
+
+Render Class
+------------
+
+  Key Press Options:
+    . = Set world space rotation angles to zero
+    I = Toggle image capture On/Off
+    O = Set orthographic projection
+    P = Set perspective projection
+    V = Clear selection volume
+
+  Mouse Button and Motion Options:
+    Left = Select object and render as wire frame
+      With render debug On, display selection volume and print 
+      selection volume dimensions, and print selected object's 
+      shape, name and location.
+    Middle = Rotate world space about origin
+      Vertical mouse motion rotates about world space X axis.
+      Horizontal mouse motion rotates about world space Y axis.
+  
