@@ -2,16 +2,16 @@
 
 ### viewODE ###
  
-Python program to view and control a humanoid figure generated using PyODE for simulating jointed rigid body dynamics, PyOpenGL for 3D rendering and Pillow (PIL) for image capture and conversion. The program was originally developed as a simplistic virtual dynamics environment to explore the capabilities of ODE in modeling a humanoid robot. 
+Python program to view and control a simulated humanoid robotic figure using PyODE for modeling jointed rigid body dynamics, PyOpenGL for 3D rendering and Pillow (PIL) for image capture and conversion. The program was originally developed as a simplistic virtual dynamics environment to explore the capabilities of ODE in modeling a humanoid robot. 
 
 ### Repository Directory Structure ###
 
-The main program file is viewODE.py and other python files are object class modules (Actions, Capture, Control, Figure, Frame, Render, Select, Solids), static procedure modules (Joints, Motors and vecMath) or utility programs and scripts.
+The main program file is viewODE.py. Other python files are object class modules (Actions, Capture, Control, Figure, Frame, Render, Select, Solids), static procedure modules (Joints, Motors and vecMath) or utility programs and scripts.
 
 * The root directory contains the main program file and associated object class and static procedure module files.
 * The ./docs subdirectory contains program usage instructions and design documentation.
 * The ./test subdirectory contains unit test driver programs and scripts.
-* The ./util subdirectory contains scripts for converting captured JPEG image files to animated GIFs and MP4s, and to generate xgraph data files from debug print text files.
+* The ./util subdirectory contains scripts for converting captured JPEG image files to animated GIFs and MP4s, and to generate **xgraph** data files from debug print text files.
 
 ### Execution Prerequisites ###
 
@@ -32,5 +32,5 @@ The main program file is viewODE.py and other python files are object class modu
 ### Attributions ###
 
 * Matthias Baas and Pierre Gay for the [tutorial3.py](https://sourceforge.net/projects/pyode/) program which was used as a basis for the simulation loop, solid rendering, and collision, keypress, mouse and idle callbacks in viewODE.
-* Matt Heinzen for the [ragdoll-pyode-tutorial.py](http://monsterden.net/software/ragdoll-pyode-tutorial) program which was used as a basis for vector math functions and jointed body modeling.
+* Matt Heinzen for the [ragdoll-pyode-tutorial.py](http://monsterden.net/software/ragdoll-pyode-tutorial) program which was used as a basis for vector math functions and jointed rigid body modeling of a humanoid figure.
 
