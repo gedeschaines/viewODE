@@ -32,5 +32,5 @@ The main program file is viewODE.py and other python files are object class modu
 ### Attributions ###
 
 * Matthias Baas and Pierre Gay for the [tutorial3.py](https://sourceforge.net/projects/pyode/) program which was used as a basis for the simulation loop, solid rendering, and collision, keypress, mouse and idle callbacks in viewODE.
-* Matt Heinzen for the [ragdoll-pyode-tutorial.py](http://monsterden.net/software/ragdoll-pyode-tutorial/) program which was used as a basis for vector math functions and jointed body modeling.
+* Matt Heinzen for the [ragdoll-pyode-tutorial.py](http://monsterden.net/software/ragdoll-pyode-tutorial) program which was used as a basis for vector math functions and jointed body modeling.
 
