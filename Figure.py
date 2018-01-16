@@ -1,10 +1,15 @@
-# PyODE Figure.py:  jointed ODE figure definition module.
-
-# Originally by Gary Deschaines
+# Figure.py
+#
+# viewODE humanoid jointed rigid body figure definition module.
+#
+# Originally by Gary Deschaines, 2009.
 
 import sys
 
 from math import *
+
+#
+# Import ODE module for world, space, body and joint models.
 
 try:
   import OpenGL
@@ -42,11 +47,18 @@ except:
 class Figure:
     
   def __init__(self, world, space, floor, sfac):
-    """ Constructor.
-        world -- ODE world
-        space -- ODE space
-                    
-        Initialize the ODE figure.
+    """
+    A viewODE Figure class contructor to instantiates a humanoid robotic
+    figure object.
+
+    @param world: The simulated dynamic world.
+    @type  world: ODE World object
+    @param space: The dynamic world space .
+    @type  space: ODE Space object
+    @param space: The dynamic world space ground plane.
+    @type  space: ODE GeomPlane object
+    @param sfac: The figure size scaling factor.
+    @param sfac: float
     """
     
     self.world      = world

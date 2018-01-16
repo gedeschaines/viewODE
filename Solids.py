@@ -1,12 +1,23 @@
-# PyODE Solids.py:  ODE figure frame solids definition module.
-
-# Originally by Gary Deschaines
+# Solids.py
+#
+# viewODE solids definition module.
+#
+# Originally by Gary Deschaines, 2009.
+#
+# Attributions
+#
+# + Matthias Baas and Pierre Gay for the Python-ODE Bindings examples program
+#   tutorial3.py available at https://sourceforge.net/projects/pyode/ which was
+#   used as a basis for the solid models.
 
 import sys
 
 from math   import *
 from string import *
-  
+
+#
+# Import ODE module for world, space, body, geom and mass models.
+
 try:
   import ode
 except:
@@ -15,13 +26,16 @@ except:
 
 class Solids:
     
-  def __init__(self,label):
-    """ Constructor.
-        Solids -- ODE figure frame solids
-                    
-        Initialize the ODE figure frame solids.
+  def __init__(self, label):
     """
-    
+    A viewODE Solids class constructor to instantiate a viewODE world space
+    solid object comprised of an ODE body and geom, and which may be attached
+    to other solids with ODE joints and motors.
+                    
+    @param label: The solid's unique identifying label.
+    @type  label: string
+    """
+
     self.label   = label
     self.body    = None
     self.geom    = None
@@ -39,7 +53,8 @@ class Solids:
     self.h       = 0.0
     
 def solidLabel(side, name):
-  """ Generate a solid label from side and name.
+  """
+  Generate a solid label from side and name.
   """
   if side and name : label = str.join('',(side, '_', name))
   else             : label = name
@@ -47,7 +62,8 @@ def solidLabel(side, name):
   return label
   
 def solidHeight(solid):
-  """ Get a solid's height as measured in +Y direction.
+  """
+  Get a solid's height as measured in +Y direction.
   """
   if solid.shape == "sphere" :
     height = solid.radius*2.0
@@ -64,8 +80,15 @@ def solidHeight(solid):
   return height
   
 def solidIxyz(solid):
-  """ Get a solid's moments of inertia about its
-      principal axes.
+  """
+  Calculate and return the given solid's moments of inertia about
+  its principal axes.
+
+  @param solid: A solid.
+  @type  solid: viewODE Solids object
+
+  @return: Principle moments of inertia (Ixx,Iyy,Izz).
+  @rtype: tuple
   """
   if solid.shape == "sphere" :
     m   = solid.mass
@@ -110,7 +133,26 @@ def solidIxyz(solid):
   return (Ixx, Iyy, Izz)
   
 def solidBox(world, space, label, density, lx, ly, lz):
-  """ Create a box body and its corresponding geom.
+  """
+  Create a box body and its corresponding geom.
+
+  @param world: The viewODE world.
+  @type  world: ODE World object
+  @param space: The viewODE world space.
+  @type  space: ODE Space object
+  @param label: The solid's label.
+  @type  label: string
+  @param density: The solid's material density.
+  @type  density: float
+  @param lx: Length of box x side.
+  @type  lx: float
+  @param ly: Length of box y side.
+  @type  ly: float
+  @param lz: Length of box z side.
+  @type  lz: float
+
+  @return: The created box object.
+  @rtype: viewODE Solids object
   """
   # Create body
   body = ode.Body(world)
@@ -140,7 +182,22 @@ def solidBox(world, space, label, density, lx, ly, lz):
   return solid
       
 def solidBall(world, space, label, density, r):
-  """ Create a ball body and its corresponding geom.
+  """
+  Create a ball body and its corresponding geom.
+
+  @param world: The viewODE world.
+  @type  world: ODE World object
+  @param space: The viewODE world space.
+  @type  space: ODE Space object
+  @param label: The solid's label.
+  @type  label: string
+  @param density: The solid's material density.
+  @type  density: float
+  @param r: Radius of ball.
+  @type  r: float
+
+  @return: The created ball object.
+  @rtype: viewODE Solids object
   """
   # Create body
   body = ode.Body(world)
@@ -170,8 +227,24 @@ def solidBall(world, space, label, density, r):
   return solid
         
 def solidRod(world, space, label, density, r, l):
-  """ Create a vertical cylinder body and its 
-      corresponding geom.
+  """
+  Create a vertical cylindrical rod body and its corresponding geom.
+
+  @param world: The viewODE world.
+  @type  world: ODE World object
+  @param space: The viewODE world space.
+  @type  space: ODE Space object
+  @param label: The solid's label.
+  @type  label: string
+  @param density: The solid's material density.
+  @type  density: float
+  @param r: Radius of rod.
+  @type  r: float
+  @param l: Length of rod.
+  @type  l: float
+
+  @return: The created rod object.
+  @rtype: viewODE Solids object
   """
   # Create body
   body = ode.Body(world)
@@ -218,8 +291,26 @@ def solidRod(world, space, label, density, r, l):
   return solid
     
 def solidCone(world, space, label, density, r1, r2, h):
-  """ Create a vertical cylindrical cone body and its
-      corresponding geom.
+  """
+  Create a vertical cylindrical cone body and its corresponding geom.
+
+  @param world: The viewODE world.
+  @type  world: ODE World object
+  @param space: The viewODE world space.
+  @type  space: ODE Space object
+  @param label: The solid's label.
+  @type  label: string
+  @param density: The solid's material density.
+  @type  density: float
+  @param r1: Radius of cone base.
+  @type  r1: float
+  @param r2: Radius of cone top.
+  @type  r2: float
+  @param h: Height of cone.
+  @type  h: float
+
+  @return: The created cone object.
+  @rtype: viewODE Solids object
   """
   # Create body
   body = ode.Body(world)

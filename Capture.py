@@ -1,10 +1,15 @@
-# PyODE Capture.py:  captures framebuffer images.
-
-# Originally by Gary Deschaines
+# Capture.py:
+#
+# Captures framebuffer images.
+#
+# Originally by Gary Deschaines, 2009.
 
 import sys
 
 from locale import format_string
+
+#
+# Import OpenGL and PIL modules for capturing images from back framebuffer.
 
 try:
   import OpenGL
@@ -25,10 +30,11 @@ except:
 class Capture:
     
   def __init__(self, renderer, frame_time, filename):
-    """ Constructor.
-        Capture -- captures images from the Frame buffer
+    """
+    Constructor.
+    Capture -- captures images from the framebuffer.
                     
-        Initialize the ODE figure rendered solid selector
+    Instantiate a viewODE rendered image capture object.
     """
     
     self.renderer     = renderer

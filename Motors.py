@@ -1,12 +1,17 @@
-# PyODE Motors.py:  ODE figure frame motors definition module.
-
-# Originally by Gary Deschaines
+# Motors.py
+#
+# viewODE figure frame motors definition module.
+#
+# Originally by Gary Deschaines, 2009.
 
 import sys
 
 from math   import *
 from string import *
-  
+
+#
+# Import ODE module for joint and motor models.
+
 try:
   import ode
 except:
@@ -40,16 +45,42 @@ def axesFromSpecs(specs,side,num):
   return ( axes )
     
 def motorLabel(motor):
-    
+  """
+  Constructs and returns the label string assembled from the
+  labels for the given motor's joint body solids, joint type
+  and motor type.
+
+  @param motor: A viewODE figure frame motor.
+  @type  motor: ODE motor object
+
+  @return: motor label
+  @rtype: string
+  """
   b1name = motor.joint.getBody(0).solid.label
   b2name = motor.joint.getBody(1).solid.label
   jtype  = motor.joint.type
   mtype  = motor.type
   label  = b1name + "-" + str.join('',(b2name,jtype,mtype))
     
-  return (label)
+  return label
     
 def attachBallAMotor(frame,joint,specs):
+  """
+  Instantiates an ODE AMotor object to attach between the given Ball
+  joint's joined bodies as defined by the given figure joint specs,
+  appends the motor to the given frame motors list, and links the
+  motor to the given joint's 2nd body solid.
+
+  @param frame: A viewODE figure frame for the instantiated motor.
+  @type  frame: viewODE Frame object
+  @param joint: A viewODE figure frame joint to be driven by the instantiated motor.
+  @type  joint: ODE BallJoint object
+  @param specs: Figure joint and motor specs for the given ball joint.
+  @type  specs: viewODE Figure class JointSpecs dictionary entry for the given joint
+
+  @return: The instantiated motor attached to the given ball joint.
+  @rtype: ODE AMotor object
+  """
     
   if ( joint.type != "Ball" ) :
     print("attachBallAmotor: Joint type %s not Ball!" % \
@@ -81,10 +112,25 @@ def attachBallAMotor(frame,joint,specs):
   joint.motor = motor
   joint.getBody(1).solid.motor = motor
     
-  return (motor)
+  return motor
   
 def attachHinge2AMotor(frame,joint,specs):
-    
+  """
+  Instantiates an ODE AMotor object to attach between the given Hinge2
+  joint's joined bodies as defined by the given figure joint specs,
+  appends the motor to the given frame motors list, and links the
+  motor to the given joint's 2nd body solid.
+
+  @param frame: A viewODE figure frame for the instantiated motor.
+  @type  frame: viewODE Frame object
+  @param joint: A viewODE figure frame joint to be driven by the instantiated motor.
+  @type  joint: ODE Hinge2Joint object
+  @param specs: Figure joint and motor specs for the given hinge2 joint.
+  @type  specs: viewODE Figure class JointSpecs dictionary entry for the given joint
+
+  @return: The instantiated motor attached to the given hinge2 joint.
+  @rtype: ODE AMotor object
+  """
   if ( joint.type != "Hinge2" ) :
     print("attachHinge2Amotor: Joint type %s not Hinge2!" % \
       (joint.type) )
@@ -115,10 +161,25 @@ def attachHinge2AMotor(frame,joint,specs):
   joint.motor = motor
   joint.getBody(1).solid.motor = motor
   
-  return (motor)
+  return motor
     
 def attachHingeAMotor(frame,joint,specs):
-    
+  """
+  Instantiates an ODE AMotor object to attach between the given Hinge
+  joint's joined bodies as defined by the given figure joint specs,
+  appends the motor to the given frame motors list, and links the
+  motor to the given joint's 2nd body solid.
+
+  @param frame: A viewODE figure frame for the instantiated motor.
+  @type  frame: viewODE Frame object
+  @param joint: A viewODE figure frame joint to be driven by the instantiated motor.
+  @type  joint: ODE HingeJoint object
+  @param specs: Figure joint and motor specs for the given hinge joint.
+  @type  specs: viewODE Figure class JointSpecs dictionary entry for the given joint
+
+  @return: The instantiated motor attached to the given hinge joint.
+  @rtype: ODE AMotor object
+  """
   if ( joint.type != "Hinge" ) :
     print("attachHingeAmotor: Joint type %s not Hinge!" % \
       (joint.type) )
@@ -149,7 +210,7 @@ def attachHingeAMotor(frame,joint,specs):
   joint.motor = motor
   joint.getBody(1).solid.motor = motor
   
-  return (motor)
+  return motor
   
 def getEulerAngRatesFromAngVelVec(motor, Wvec):
   """ Assumes ang1 never goes to +/- pi/2.0

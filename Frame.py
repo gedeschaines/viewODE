@@ -1,12 +1,17 @@
-# pyODE Frame.py:  ODE figure frame definition module.
-
-# Originally by Gary Deschaines
+# Frame.py
+#
+# viewODE humanoid jointed rigid body figure frame definition module.
+#
+# Originally by Gary Deschaines, 2009.
 
 import sys
 
 from math   import *
 from string import *
-  
+
+#
+# Import ODE module for world, space, body and joint models.
+
 try:
   import ode
 except:
@@ -30,11 +35,12 @@ class Frame:
     
   def __init__(self, figure):
     """
-    Constructor to initialize a figure's frame, which is comprised of
-    of ODE bodies, joints and motors.
-    
-    @type  figure: figure object
+    A viewODE Frame class constructor to instantiate a humanoid robotic
+    figure's frame object, which is comprised of ODE bodies, joints and
+    motors.
+
     @param figure: A figure for which to define its frame.
+    @type  figure: viewODE Figure object
                     
     """
     self.figure     = figure
@@ -76,7 +82,7 @@ class Frame:
     self.slimbones  = 0
     self.setFeedbackOn()
     
-  def setConfig(self,key):
+  def setConfig(self, key):
       
     set = False
     
@@ -100,7 +106,7 @@ class Frame:
     if self.feedback   : print("Feedback ON")
     else               : print("Feedback OFF")
     
-  def setState(self,key):
+  def setState(self, key):
       
     set = False
   
@@ -151,19 +157,19 @@ class Frame:
   def createFigureFrame(self, figure, px, py, pz):
     """
     Creates a figure's frame in its world space.
-    
-    @type   figure: figure object
-    @param  figure: A figure for which to define a frame.
-    @type  px: number
-    @param px: World space position x coordinate.
-    @type  py: number
-    @param py: World space position y coordinate.
-    @type  pz: number
-    @param pz: World space position z coordinate.
 
-    @rtype: tuple 
+    @param figure: A figure for which to define a frame.
+    @type  figure: viewODE Figure object
+    @param px: ODE world space position x coordinate.
+    @type  px: float
+    @param py: ODE world space position y coordinate.
+    @type  py: float
+    @param pz: ODE world space position z coordinate.
+    @type  pz: float
+
     @return: ((x,y,z)) -- position coordinates in world space for center
              of the figure's head.
+    @rtype: tuple
     """
     
     figure.origin = (px, py, pz)
@@ -369,7 +375,7 @@ class Frame:
       motor = attachHinge2AMotor(frame,joint,specs)
     
     return ( (hx,hy,hz) )
-    
+
   def createFigureLeg(self, figure, side, px, py, pz):
     """
     Creates a leg for the figure's frame in its world space.
@@ -377,19 +383,20 @@ class Frame:
     The position coordinates (px,py,pz) are used for bottom of the
     foot directly below center of hip joint.
         
-    @type  figure: figure object
+
     @param figure: A figure for which to attach a frame's leg.
-    @type  side: char
+    @type  figure: viewODE Figure object
     @param side: 'R' for right, 'L' for left.
-    @type  px: number
+    @type  side: char
     @param px: World space position x coordinate.
-    @type  py: number
+    @type  px: float
     @param py: World space position y coordinate.
-    @type  pz: number
-    @param pz: World space position z coordinate. 
- 
-    @rtype: tuple
+    @type  py: float
+    @param pz: World space position z coordinate.
+    @type  pz: float
+
     @return: (x,y,z,body) -- position and body of hip joint.
+    @rtype: tuple
     """
     
     world = figure.world
@@ -634,19 +641,20 @@ class Frame:
     The position coordinates (px,py,pz) are used for top of the
     shoulder directly above center of shoulder joint.
     
-    @type  figure: figure object
+
     @param figure: A figure for which to attach a frame's arm.
-    @type  side: char
+    @type  figure: viewODE Figure object
     @param side: 'R' for right, 'L' for left.
-    @type  px: number
+    @type  side: char
     @param px: World space position x coordinate.
-    @type  py: number
+    @type  px: number
     @param py: World space position y coordinate.
-    @type  pz: number
+    @type  py: number
     @param pz: World space position z coordinate. 
- 
-    @rtype: tuple
+    @type  pz: number
+
     @return: (x,y,z,body) -- position and body of shoulder joint.
+    @rtype: tuple
     """
     world = figure.world
     space = figure.space

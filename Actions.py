@@ -1,17 +1,25 @@
-# PyODE Actions.py:  ODE figure actions definition module.
-
-# Originally by Gary Deschaines
+# Actions.py
+#
+# viewODE humanoid robotic figure actions definition module.
+#
+# Originally by Gary Deschaines, 2009.
 
 import sys
 
 from math   import *
 from string import *
 
+#
+# Import ODE module for joint and motor modeling.
+
 try:
   import ode
 except:
   print("Error: This module requires PyODE !!")
   sys.exit(0)
+
+#
+# Import viewODE modules for humanoid figure joints and motors.
 
 try:
   from Joints import *
@@ -30,9 +38,9 @@ class Actions :
   
   def __init__(self, figure):
     """ Constructor.
-        figure -- ODE figure
+        figure -- viewODE figure
                     
-        Initialize the ODE figure actions.
+        Initialize the viewODE figure actions.
     """
     self.figure      = figure
     self.frame       = figure.frame

@@ -1,11 +1,16 @@
-# PyODE Select.py:  jointed ODE figure rendered solid selection
-#                   definition module.
+# Select.py
+#
+# viewODE figure rendered solid selection definition module.
+#
+# Originally by Gary Deschaines, 2009.
 
-# Originally by Gary Deschaines
-
-import sys, os
+import sys
+import os
 
 from math import *
+
+#
+# Import OpenGL modules for rendering and selection.
 
 try:
   import OpenGL
@@ -69,7 +74,10 @@ class Select:
     return self.picked_body_info
     
   def pickClosestSelectBody(self):
-    
+    """
+    Pick the closest body among those in the selected body list.
+    """
+
     if self.SELECTBODIES :
       
       # Pick the selected body which is closest to 
@@ -169,23 +177,23 @@ class Select:
     """ 
     Replacement for glSelectWithCallback function which is no longer included 
     in the PyOpenGL package.
-             
-    @type  x: int
+
     @param x: Window x coordinate for center of the pick box.
-    @type  y: int
+    @type  x: int
     @param y: Window y coordinate for center of the pick box.
-    @type  callback: callable Python object
+    @type  y: int
     @param callback: Render callback, taking zero arguments, which performs
                      pick-mode rendering.
-    @type  xsize: int
+    @type  callback: callable Python object
     @param xsize: The x dimension of the pick box (default 5).
-    @type  ysize: int
+    @type  xsize: int
     @param ysize: The y dimension of the pick box (default 5).
-    @type  buffer_size: int
+    @type  ysize: int
     @param buffer_size: Number of bytes allocated for pick results buffer
                         (default 512).
-    @rtype: tuple
-    @return: A tuple (possibly empty) of the form
+    @type  buffer_size: int
+
+    @return: A tuple (possibly empty) of the form:
     
              (minimumzdepth, maximumzdepth, (name, name, name,...),...)
              
@@ -200,6 +208,7 @@ class Select:
              for perspective projectons.
              
              name -- name (integer) used in calls to glPushName(int).
+    @rtype: tuple
     """
     viewport = glGetIntegerv(GL_VIEWPORT)
     previousprojmatrix = glGetDoublev(GL_PROJECTION_MATRIX)
@@ -221,7 +230,8 @@ class Select:
     return glRenderMode(GL_RENDER)
 
   def drawSelectVolume(self):
-    """ Draw a selection rectangle or volume box.
+    """
+    Draw a selection rectangle or volume box.
     """
     if len(self.SELECTVXYZ) == 4 or \
        len(self.SELECTVXYZ) == 8 :

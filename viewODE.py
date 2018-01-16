@@ -1,15 +1,34 @@
-#!/usr/bin/python
+#!/usr/bin/env python2
 
-# PyODE viewODE.py:  jointed ODE figure viewing and 
-#                    manipulation
+# viewODE.py
+#
+# View and manipulate a humanoid robotic figure simulated using PyODE for
+# modeling jointed rigid body dynamics, PyOpenGL for 3D rendering, and PIL
+# for image capture.
+#
+# Originally by Gary Deschaines, 2009.
+#
+# Attributions
+#
+# + Matthias Baas and Pierre Gay for the Python-ODE Bindings examples program
+#   tutorial3.py available at https://sourceforge.net/projects/pyode/ which was
+#   used as a basis for the main simulation loop, solid rendering, and collision,
+#   keypress, mouse and idle callbacks.
+# + Matt Heinzen for PyODE Ragdoll Physics Tutorial program ragdoll-pyode-tutorial.py
+#   available at http://monsterden.net/software/ragdoll-pyode-tutorial which was used
+#   as a basis for vector math functions and jointed rigid body modeling of a humanoid
+#   figure.
 
-# Originally by Gary Deschaines
-
-import sys, os, time
+import sys
+import os
+import time
   
 from math   import *
 from string import *
-   
+
+#
+# Import OpenGL modules for rendering and ODE module for dynamics.
+
 try:
   import OpenGL
   OpenGL.USE_FREEGLUT = False
@@ -44,29 +63,32 @@ try:
   from vecMath import *
 except:
   print("Error: vecMath not installed properly !!")
-     
+
+#
+# Static procedures to support main simulation loop processes
+
 def create_target_object(world, space, px, py, pz):
   """
   Create a target object at the specified position (px,py,pz) in the
   given ODE world space.
-  
-  Returns ((x,y,z),target) 
-   
-  @type  world: ODE world
+
+  Returns ((x,y,z),target)
+
   @param world: An ODE world returned by call to ode.World().
-  @type  space: ODE space
+  @type  world: ODE World object
   @param space: An ODE space returned by call to ode.Space().
-  @type  px: number
+  @type  space: ODE Space object
   @param px: World space position x coordinate.
-  @type  py: number
+  @type  px: float
   @param py: World space position y coordinate.
-  @type  pz: number
+  @type  py: float
   @param pz: World space position z coordinate.
-  
-  @rtype:  tuple
+  @type  pz: float
+
+
   @return: ((x,y,z),target) -- position coordinates in world space for
            center of the target body and the target's ODE body object.
-          
+  @rtype:  tuple
   """
   r       = 0.25
   x       = px
@@ -82,9 +104,9 @@ def create_target_object(world, space, px, py, pz):
 def delete_target_object(target):
   """
   Delete target object created by the L{create_target_object} method.
-      
-  @type  target: ODE body object
+
   @param target: The ODE body object created by call to create_target_object.
+  @type  target: ODE Body object
   """  
   if target :
     target.disable()
@@ -94,6 +116,12 @@ def delete_target_object(target):
     target = None
 
 def resetSim(mode):
+  """
+  Perform operations associated with given reset mode enumeration
+
+  @param mode: Enumeration of a reset mode.
+  @type mode: int
+  """
   global RESET_MODE, INITIAL_POS, PAUSE
   global contactgroup
   global state
@@ -136,11 +164,20 @@ def resetSim(mode):
     printConfig()
   
 def exitSim(reset_mode):
+  """
+  Performs reset operations prior to simulation exit.
+
+  @param reset_mode: Enumeration of a reset mode.
+  @type  reset_mode: int
+  """
   resetSim(reset_mode)
   ode.CloseODE()
   sys.exit (0)
   
 def printConfig():
+  """
+  Print renderer and figure configurations.
+  """
   global renderer
   global figure
   
@@ -150,19 +187,19 @@ def printConfig():
   figure.printConfig()
   print("---------------------------------------------")
 
-def _keyfunc (key, x, y):
+def _keyfunc(key, x, y):
   """
   Keypress handler.
   
   This method is passed to the Render class constructor in order to 
   be registered as the glutKeyboardFunc callback.
-  
-  @type  key: char
+
   @param key: Keypress code.
-  @type  x: int
+  @type  key: char
   @param x: Window x coordinate.
-  @type  y: int
+  @type  x: int
   @param y: Window y coordinate.
+  @type  y: int
   """
   global RESET_MODE, PAUSE
   global renderer
@@ -210,16 +247,15 @@ def _mousefunc(b, s, mx, my):
   
   This method is passed to the Render class constructor in order to
   be registered as the glutMouseFunc callback.
-  
-  @type  b: number
+
   @param b: Mouse button code.
-  @type  s: number
+  @type  b: int
   @param s: Mouse button state.
-  @type  mx: int
+  @type  s: int
   @param mx: Mouse cursor position x coordinate.
-  @type  my: int
+  @type  mx: int
   @param my: Mouse cursor position y coordinate.
-  
+  @type  my: int
   """
   global renderer
   global PAUSE
@@ -239,11 +275,11 @@ def grab(body, tstep):
 
   A lateral force is applied to the grabbed body solid in order to manipulate
   the body.
-  
-  @type  body: ODE body object
+
   @param body: The body returned by the Select pick processing.
-  @type  tstep: number
+  @type  body: ODE Body object
   @param tstep: The simulation time step.
+  @type  tstep: float
   """
   global world
   global renderer
@@ -308,6 +344,14 @@ def near_callback(args, geom1, geom2):
 
   This function checks if the given geoms do collide and creates contact
   joints if they do.
+
+
+  @param args: ODE world and contactgroup
+  @type  args: tuple
+  @param geom1: geometry of 1st body
+  @type  geom1: ODE Geometry object
+  @param geom2: geometry of 2nd body
+  @type  geom2: ODE Geometry objec
   """
   global figure
   
@@ -329,6 +373,7 @@ def near_callback(args, geom1, geom2):
   for c in contacts:
     (pos,nrm,depth,g1,g2) = c.getContactGeomParams()
     if isinstance(g2,ode.GeomPlane) :
+      # save foot contacts with ground for COP calculation.
       if g1.solid.label == "R_foot" or \
          g1.solid.label == "R_ball" or \
          g1.solid.label == "R_toes" :
@@ -428,7 +473,10 @@ def _idlefunc():
     glutPostRedisplay()
     
   lasttime = time.time()
-  
+
+#
+# Simulation main
+
 if __name__ == '__main__':
   
   # Simulation reset mode:
@@ -461,13 +509,13 @@ if __name__ == '__main__':
   y        = 50
   width    = 800
   height   = 600
-  renderer = Render(x, y,          \
-                    width, height, \
-                    _idlefunc,     \
-                    _keyfunc,      \
-                    _mousefunc,    \
-                    frame_time,    \
-                    filename       )
+  renderer = Render(x, y,
+                    width, height,
+                    _idlefunc,
+                    _keyfunc,
+                    _mousefunc,
+                    frame_time,
+                    filename )
 
   # Create ODE world object
   world = ode.World()

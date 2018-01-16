@@ -1,10 +1,22 @@
-# PyODE Render.py:  jointed ODE figure rendering definition module.
+# Render.py
+#
+# viewODE rendering definition module.
+#
+# Originally by Gary Deschaines, 2009.
+#
+# Attributions
+#
+# + Matthias Baas and Pierre Gay for the Python-ODE Bindings examples program
+#   tutorial3.py available at https://sourceforge.net/projects/pyode/ which was
+#   used as a basis for solids rendering.
 
-# Originally by Gary Deschaines
-
-import sys, os
+import sys
+import os
 
 from math import *
+
+#
+# Import OpenGL modules for rendering and ODE module for body models.
 
 try:
   import OpenGL
@@ -21,7 +33,10 @@ try:
 except:
   print("Error: This module requires PyODE !!")
   sys.exit()
-  
+
+#
+# Import viewODE object class modules for solids selection and frame capture.
+
 try:
   from Select  import *
 except:

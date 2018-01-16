@@ -1,6 +1,8 @@
-# PyODE Joints.py:  ODE figure frame joints definition module.
-
-# Originally by Gary Deschaines
+# Joints.py
+#
+# viewODE figure frame joints definition module.
+#
+# Originally by Gary Deschaines, 2009.
 
 import sys
 
@@ -46,7 +48,16 @@ def getJointSpecAxesInWorld(joint):
   return (jaxis[0], jaxis[1], jaxis[2])
     
 def jointLabel(joint):
-    
+  """
+  Constructs and returns the label string assembled from the labels
+  for the given joint's joined body solids and joint type.
+
+  @param joint: a viewODE figure frame joint
+  @type  joint: ODE joint object
+
+  @return: joint label
+  @rtype: string
+  """
   b1name = joint.getBody(0).solid.label
   b2name = joint.getBody(1).solid.label
   jtype  = joint.type
@@ -77,7 +88,26 @@ def printBodyJointTorqueInfo(case, solid, t, pick):
               (T2j, T2jvec[0],T2jvec[1],T2jvec[2]) )
     
 def attachBallJoint(frame, side, body1, body2, specs):
-    
+  """
+  Instantiates an ODE BallJoint object to attach between the two given
+  bodies as defined by the given figure joint specs, appends the joint
+  to the given frame joints list, and links the joint to the joint's
+  2nd body solid.
+
+  @param frame: A viewODE figure frame for the instantiated joint.
+  @type  frame: viewODE Frame object
+  @param side: 'L', 'R', or 'C' for left, right or center respectively.
+  @type  side: char
+  @param body1: 1st body of joint attachment.
+  @type  body1: ODE body object
+  @param body2: 2nd body of joint attachment.
+  @type  body2: ODE body object
+  @param specs: Figure joint and motor specs for the given ball joint.
+  @type  specs: viewODE Figure class JointSpecs dictionary entry for the given joint
+
+  @return: The instantiated joint.
+  @rtype: ODE BallJoint object
+  """
   joint = ode.BallJoint(frame.world, frame.jointgroup)
   joint.attach(body1, body2)
   (x, y, z) = body2.getPosition()
@@ -92,10 +122,29 @@ def attachBallJoint(frame, side, body1, body2, specs):
   frame.joints.append(joint)
   body2.solid.joint = joint
     
-  return (joint)
+  return joint
     
 def attachHinge2Joint(frame,side,body1,body2,specs):
-    
+  """
+  Instantiates an ODE Hinge2Joint object to attach between the two given
+  bodies as defined by the given figure joint specs, appends the joint
+  to the given frame joints list, and links the joint to the joint's
+  2nd body solid.
+
+  @param frame: A viewODE figure frame for the instantiated joint.
+  @type  frame: viewODE Frame object
+  @param side: 'L', 'R', or 'C' for left, right or center respectively.
+  @type  side: char
+  @param body1: 1st body of joint attachment.
+  @type  body1: ODE body object
+  @param body2: 2nd body of joint attachment.
+  @type  body2: ODE body object
+  @param specs: Figure joint and motor specs for the given hinge2 joint.
+  @type  specs: viewODE Figure class JointSpecs dictionary entry for the given joint
+
+  @return: The instantiated joint.
+  @rtype: ODE Hinge2Joint object
+  """
   axis1  = axisFromSpecs(specs,side,0)
   axis2  = axisFromSpecs(specs,side,2)
   LoStop = specs['LoStop']
@@ -119,10 +168,29 @@ def attachHinge2Joint(frame,side,body1,body2,specs):
   frame.joints.append(joint)
   body2.solid.joint = joint
           
-  return (joint)
+  return joint
    
 def attachHingeJoint(frame, side, body1, body2, specs):
-      
+  """
+  Instantiates an ODE HingeJoint object to attach between the two given
+  bodies as defined by the given figure joint specs, appends the joint
+  to the given frame joints list, and links the joint to the joint's
+  2nd body solid.
+
+  @param frame: A viewODE figure frame for the instantiated joint.
+  @type  frame: viewODE Frame object
+  @param side: 'L', 'R', or 'C' for left, right or center respectively.
+  @type  side: char
+  @param body1: 1st body of joint attachment.
+  @type  body1: ODE body object
+  @param body2: 2nd body of joint attachment.
+  @type  body2: ODE body object
+  @param specs: Figure joint and motor specs for the given hinge joint.
+  @type  specs: viewODE Figure class JointSpecs dictionary entry for the given joint
+
+  @return: The instantiated joint.
+  @rtype: ODE HingeJoint object
+  """
   axis   = axisFromSpecs(specs,side,0)
   LoStop = specs['LoStop']
   HiStop = specs['HiStop']
@@ -144,10 +212,25 @@ def attachHingeJoint(frame, side, body1, body2, specs):
   frame.joints.append(joint)
   body2.solid.joint = joint
     
-  return (joint)
+  return joint
     
 def attachFixedJoint(frame, side, body1, body2):
-      
+  """
+  Instantiates an ODE FixedJoint object to attach between the two given
+  bodies and appends the joint to the given frame joints list.
+
+  @param frame: A viewODE figure frame for the instantiated joint.
+  @type  frame: viewODE Frame object
+  @param side: 'L', 'R', or 'C' for left, right or center respectively.
+  @type  side: char
+  @param body1: 1st body of joint attachment.
+  @type  body1: ODE body object
+  @param body2: 2nd body of joint attachment.
+  @type  body2: ODE body object
+
+  @return: The instantiated joint.
+  @rtype: ODE FixedJoint object
+  """
   joint = ode.FixedJoint(frame.world, frame.jointgroup)
   joint.attach(body1, body2)
   joint.setFixed()

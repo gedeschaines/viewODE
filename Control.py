@@ -1,17 +1,25 @@
-# PyODE Control.py:  ODE figure control definition module.
-
-# Originally by Gary Deschaines
+# Control.py
+#
+# viewODE humanoid robotic figure control definition module.
+#
+# Originally by Gary Deschaines, 2009.
 
 import sys
 
 from math   import *
 from string import *
 
+#
+# Import ODE module for joint and motor modeling.
+
 try:
   import ode
 except:
   print("Error: This module requires PyODE !!")
   sys.exit(0)
+
+#
+# Import viewODE modules for humanoid figure joints and motors.
 
 try:
   from Joints import *
@@ -30,9 +38,9 @@ class Control:
   
   def __init__(self, figure):
     """ Constructor.
-        figure -- ODE figure
+        figure -- viewODE figure
                     
-        Initialize the ODE figure control.
+        Initialize the viewODE figure control.
     """
     self.figure     = figure
     self.frame      = figure.frame
