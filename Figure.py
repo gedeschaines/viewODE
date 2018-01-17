@@ -4,7 +4,7 @@
 #
 # Originally by Gary Deschaines, 2009.
 
-import sys
+from sys import exit
 
 from math import *
 
@@ -19,13 +19,16 @@ try:
   from OpenGL.GLUT import *
 except:
   print("Error: This module requires PyOpenGL !!")
-  sys.exit()
+  exit()
   
 try:
   import ode
 except:
   print("Error: This module requires PyODE !!")
-  sys.exit()
+  exit()
+
+#
+# Import viewODE modules for frame, control, action and vector math.
 
 try:
   from Frame import *
@@ -71,6 +74,7 @@ class Figure:
     self.control    = Control(self)
     self.actions    = Actions(self)
     self.state      = 0
+    self.last_state = 0
     
     # Dynamic states 
 
@@ -476,7 +480,8 @@ class Figure:
   def toggleActionsDebug(self) : self.actions.toggleDebug()
     
   def setAnimationState(self, state):
-    
+
+    self.last_state = self.state
     self.state = state
     
   def getAnimationState(self):
@@ -488,7 +493,11 @@ class Figure:
     self.actions.resetConfig()
     self.actions.printConfig()
     self.setAnimationState(self.INITIALIZE)
-    
+    self.last_state = 0
+
+  def lastStateJointManip(self):
+    return self.last_state == self.JOINT_MANIP
+
   def doKeyPress(self, key):
   
     if self.frame.setConfig(key) :
@@ -530,6 +539,7 @@ class Figure:
       else :
         if body.solid.joint : 
           self.setAnimationState(self.JOINT_MANIP)
+          self.control.setManipJoint(body.solid.joint)
         else : 
           self.setAnimationState(self.SOLID_MANIP)
     else :
@@ -661,7 +671,7 @@ class Figure:
         self.setAnimationState(self.INITIALIZE)
       self.control.applyMotorTorques(t,tstep)
       self.control.applyJointDamping(t,tstep)
-      
+
   def setFigureHeight(self):
     
     htot = self.foot_thickness   + \
