@@ -33,7 +33,7 @@ The **viewODE** program presents an interactive display for three dimensional (3
 * The figure is initially in a standing state and will actively attempt to remain standing by adjusting torques on the ankle, knee, hip, waist and neck joint motors. While the simulation is running, the user can change the following with key presses as described in the **./docs/InputOptions.txt** file.
     * arm and leg bone shape (box or rod)
     * joint type (hinge or ball)
-    * action state (standing, suspended, striding, reaching, kicking or walking)
+    * action mode (standing, suspended, striding, reaching, kicking or walking)
     * joint damping mode (none, rotational or feedback torque)
     * manipulated joint forcing torque modes (non-forced axis limiting and maintain joint rotation)
     * active motor axis (none or +/- x, y or z)
@@ -43,14 +43,14 @@ The **viewODE** program presents an interactive display for three dimensional (3
 * Pressing the left mouse button while the mouse cursor is on a solid will select the solid for manipulation. The selected solid is rendered as a wire frame. If the target sphere is selected, it can be moved to apply an impact force on the figure or to influence the figure's reaction while in the reaching or kicking mode. If the selected solid is attached to the figure's frame, then the figure is placed in the suspension state and a force or torque is applied to the solid.
     * A grabbing force is applied to solids corresponding to these body parts: toes, foot, shin, thigh, pelvis, torso, hand, forearm, upper arm and head.
     * A motor torque is applied to joints corresponding these body parts: ball of foot, ankle, knee, hip, waist, wrist, elbow, shoulder and neck.
-* To collect debug print data, redirect shell output to a text file when invoking viewODE.py such as: 'python viewODE.py 1>output.txt 2>&1'. Specific joint data records can be extracted from the output file and written to another text file using a utility such as **grep**, and the extracted joint data records file can then be processed with **./util/txt2dat.py** to produce a data file suitable for input to the **xgraph** program.
+* To collect debug print data, redirect shell output to a text file when invoking **viewODE** such as: 'python viewODE.py 1>output.txt 2>&1'. Specific joint data records can be extracted from the output file and written to another text file using a utility such as **grep**, and the extracted joint data records file can then be processed with **./util/txt2dat.py** to produce a data file suitable for input to the **xgraph** program.
 * The simulation can be paused/resumed by pressing the 'Z' key or by pressing/holding/releasing the right mouse button.
 * To terminate the program, press the 'esc' key or close the **viewODE** window.
 
 ### Attributions ###
 
-* Matthias Baas and Pierre Gay for the [tutorial3.py](https://sourceforge.net/projects/pyode/) program which was used as a basis for the simulation loop, solid rendering, and collision, keypress, mouse and idle callbacks.
-* Matt Heinzen for the [ragdoll-pyode-tutorial.py](http://monsterden.net/software/ragdoll-pyode-tutorial) program which was used as a basis for vector math functions and jointed rigid body modeling of a humanoid figure.
+* Matthias Baas and Pierre Gay for the **tutorial3.py** example program in the [Python-ODE Bindings](https://sourceforge.net/projects/pyode/) project which was used as a basis for the simulation loop, solid rendering, and collision, keypress, mouse and idle callbacks.
+* Matt Heinzen for his [PyODE Ragdoll Physics Tutorial](http://monsterden.net/software/ragdoll-pyode-tutorial) which was used as source for vector math functions and jointed rigid body modeling of a humanoid figure.
 
 ### Support ###
 
