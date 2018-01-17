@@ -4,11 +4,8 @@
 #
 # Originally by Gary Deschaines, 2009.
 
-import sys
-
-from math   import *
-from string import *
-
+from sys import exit
+from math import asin
 #
 # Import ODE module for joint and motor modeling.
 
@@ -16,7 +13,7 @@ try:
   import ode
 except:
   print("Error: This module requires PyODE !!")
-  sys.exit(0)
+  exit(0)
 
 #
 # Import viewODE modules for humanoid figure joints, motors and vector math.

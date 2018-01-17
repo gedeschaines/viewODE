@@ -4,10 +4,8 @@
 #
 # Originally by Gary Deschaines, 2009.
 
-import sys
-
-from math   import *
-from string import *
+from sys  import exit
+from math import cos, sin
 
 #
 # Import ODE module for joint and motor models.
@@ -16,7 +14,7 @@ try:
   import ode
 except:
   print("Error: This module requires PyODE !!")
-  sys.exit()
+  exit()
 
 #
 # Import viewODE module for vector math.
@@ -88,7 +86,7 @@ def attachBallAMotor(frame,joint,specs):
   if ( joint.type != "Ball" ) :
     print("attachBallAmotor: Joint type %s not Ball!" % \
       (joint.type) )
-    sys.exit(1)
+    exit(1)
       
   Axes   = axesFromSpecs(joint.specs,joint.side,3)
   LoStop = joint.specs['LoStop']
@@ -137,7 +135,7 @@ def attachHinge2AMotor(frame,joint,specs):
   if ( joint.type != "Hinge2" ) :
     print("attachHinge2Amotor: Joint type %s not Hinge2!" % \
       (joint.type) )
-    sys.exit(1)
+    exit(1)
       
   Axes   = axesFromSpecs(joint.specs,joint.side,3)
   LoStop = joint.specs['LoStop']
@@ -186,7 +184,7 @@ def attachHingeAMotor(frame,joint,specs):
   if ( joint.type != "Hinge" ) :
     print("attachHingeAmotor: Joint type %s not Hinge!" % \
       (joint.type) )
-    sys.exit(1)
+    exit(1)
     
   Axes   = axesFromSpecs(joint.specs,joint.side,3)
   LoStop = joint.specs['LoStop']

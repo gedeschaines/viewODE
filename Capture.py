@@ -4,8 +4,7 @@
 #
 # Originally by Gary Deschaines, 2009.
 
-import sys
-
+from sys import exit
 from locale import format_string
 
 #
@@ -19,13 +18,13 @@ try:
   from OpenGL.GLUT import *
 except:
   print("Error: This module requires PyOpenGL !!")
-  sys.exit()
+  exit()
   
 try:
   from PIL import Image
 except:
   print("Error: This module requires PIL !!")
-  sys.exit()
+  exit()
   
 class Capture:
     

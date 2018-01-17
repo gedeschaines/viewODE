@@ -10,10 +10,7 @@
 #   tutorial3.py available at https://sourceforge.net/projects/pyode/ which was
 #   used as a basis for solids rendering.
 
-import sys
-import os
-
-from math import *
+from sys import argv, exit
 
 #
 # Import OpenGL modules for rendering and ODE module for body models.
@@ -26,13 +23,13 @@ try:
   from OpenGL.GLUT import *
 except:
   print("Error: This module requires PyOpenGL !!")
-  sys.exit()
+  exit()
   
 try:
   import ode
 except:
   print("Error: This module requires PyODE !!")
-  sys.exit()
+  exit()
 
 #
 # Import viewODE modules for rendered solids selection and image capture.
@@ -103,7 +100,7 @@ class Render:
      
     # Initialize Glut
      
-    glutInit (sys.argv)
+    glutInit(argv)
 
     # Open a display window
     

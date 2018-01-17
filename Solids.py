@@ -10,10 +10,8 @@
 #   tutorial3.py available at https://sourceforge.net/projects/pyode/ which was
 #   used as a basis for the solid models.
 
-import sys
-
-from math   import *
-from string import *
+from sys  import exit
+from math import pi, sqrt
 
 #
 # Import ODE module for world, space, body, geom and mass models.
@@ -22,7 +20,7 @@ try:
   import ode
 except:
   print("Error: This module requires PyODE !!")
-  sys.exit()
+  exit()
 
 class Solids:
     
@@ -75,7 +73,7 @@ def solidHeight(solid):
     (lx, height, lz) = solid.boxsize
   else:
     print("unknown solid.shape %s" % solid.shape)
-    sys.exit(0)
+    exit(0)
     
   return height
   
@@ -128,7 +126,7 @@ def solidIxyz(solid):
     Izz     = mdiv12*(asq + bsq)
   else:
     print("unknown solid.shape %s" % solid.shape)
-    sys.exit(0)
+    exit(0)
 
   return (Ixx, Iyy, Izz)
   

@@ -4,10 +4,7 @@
 #
 # Originally by Gary Deschaines, 2009.
 
-import sys
-import os
-
-from math import *
+from sys import exit
 
 #
 # Import OpenGL modules for rendering and selection.
@@ -20,7 +17,7 @@ try:
   from OpenGL.GLUT import *
 except:
   print("Error: This module requires PyOpenGL !!")
-  sys.exit()
+  exit()
 
 #
 # Import viewODE module for vector math.

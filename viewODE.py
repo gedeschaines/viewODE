@@ -21,10 +21,8 @@
 
 from sys import exit, path
 from os import getcwd
+
 import time
-  
-from math   import *
-from string import *
 
 #
 # Import OpenGL modules for rendering and ODE module for dynamics.

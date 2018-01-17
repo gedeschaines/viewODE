@@ -10,8 +10,6 @@
 #   available at http://monsterden.net/software/ragdoll-pyode-tutorial which was used
 #   as a basis for the vector math functions herein.
 
-import sys
-
 from math import pi, sqrt, acos, atan2
 
 # Math Conversion Factors and Constants

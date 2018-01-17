@@ -5,8 +5,7 @@
 # Originally by Gary Deschaines, 2009.
 
 from sys import exit
-
-from math import *
+from math import sqrt
 
 #
 # Import ODE module for world, space, body and joint models.
