@@ -19,8 +19,8 @@
 #   as a basis for vector math functions and jointed rigid body modeling of a humanoid
 #   figure.
 
-import sys
-import os
+from sys import exit, path
+from os import getcwd
 import time
   
 from math   import *
@@ -37,15 +37,18 @@ try:
   from OpenGL.GLUT import *
 except:
   print("Error: PyOpenGL not installed properly !!")
-  sys.exit()
+  exit()
   
 try:
   import ode
 except:
   print("Error: PyODE not installed properly !!")
-  sys.exit()
+  exit()
 
-sys.path.insert(1,os.getcwd())
+#
+# Import viewODE modules for figure, solids, rendering and vector math.
+
+path.insert(1,getcwd())
 
 try:
   from Figure import *
@@ -102,11 +105,15 @@ def create_target_object(world, space, px, py, pz):
   return ((x, y, z), target)
 
 def delete_target_object(target):
+
   """
   Delete target object created by the L{create_target_object} method.
 
   @param target: The ODE body object created by call to create_target_object.
   @type  target: ODE Body object
+
+  @return: empty target object
+  @rtype: None
   """  
   if target :
     target.disable()
@@ -114,6 +121,7 @@ def delete_target_object(target):
     space = geom.getSpace()
     space.remove(geom)
     target = None
+  return target
 
 def resetSim(mode):
   """
@@ -156,7 +164,7 @@ def resetSim(mode):
   figure.delete()
   
   # Delete target
-  delete_target_object(target)
+  target = delete_target_object(target)
   
   if mode != RESET_MODE['exit'] :
     print(" ")
@@ -172,7 +180,7 @@ def exitSim(reset_mode):
   """
   resetSim(reset_mode)
   ode.CloseODE()
-  sys.exit (0)
+  exit (0)
   
 def printConfig():
   """
