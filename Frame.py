@@ -18,6 +18,9 @@ except:
   print("Error: This module requires PyODE !!")
   sys.exit()
 
+#
+# Import viewODE modules for solids, joints and motors.
+
 try:
   from Solids import *
 except:
