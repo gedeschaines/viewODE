@@ -39,13 +39,15 @@ The **viewODE** program presents an interactive display for three dimensional (3
     * active motor axis (none or +/- x, y or z),
     * rendering projection mode (orthographic or perspective), and
     * simulation modes (paused, reset, image capture, debug print, etc.)
-    
+  
   with key presses as described in the **./docs/InputOptions.txt** file.
+  
 * Pressing the left mouse button while the mouse cursor is on a solid will select (pick) the solid for manipulation. If the solid is attached to the figure's frame, then the figure is placed in the suspension state and a force or torque is applied to the selected solid.
     * A grabbing force is applied to solids corresponding to these body parts: toes, foot, shin, thigh, pelvis, torso, hand, forearm, upper arm and head.
     * A motor torque is applied to joints corresponding these body parts: ball of foot, ankle, knee, hip, waist, wrist, elbow, shoulder and neck.
 
   If the target sphere is selected, it can be moved to apply an impact force on the figure or to influence the figure's reaction while in the reaching or kicking mode.
+
 * To collect debug print data, redirect shell output to a text file when invoking viewODE.py such as: 'python viewODE.py 1>output.txt 2>&1'. Specific joint data records can be extracted from the output file and written to another text file using a utility such as **grep**, and the extracted joint data records file can then be processed with **./util/txt2dat.py** to produce a data file suitable for input to the **xgraph** program.
 * The simulation can be paused/resumed by pressing the 'Z' key or by pressing/holding/releasing the right mouse button.
 * To terminate the program, press the 'esc' key or close the **viewODE** window.
