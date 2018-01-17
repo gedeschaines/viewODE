@@ -19,7 +19,7 @@ except:
   sys.exit(0)
 
 #
-# Import viewODE modules for humanoid figure joints and motors.
+# Import viewODE modules for humanoid figure joints, motors and vector math.
 
 try:
   from Joints import *
@@ -42,32 +42,37 @@ class Control:
                     
         Initialize the viewODE figure control.
     """
-    self.figure     = figure
-    self.frame      = figure.frame
-    self.debug      = False
-    self.torquemode = 1
-    self.torqueaxis = 2
-    self.rotzeroerr = True
-    self.rotdamping = False
-    self.rotlimited = False 
-    self.tfbdamping = False
-    self.direction  = 1
-    self.angerr_tol = 1.0*RPD
-    self.angvel_max = TWOPI
+    self.figure      = figure
+    self.frame       = figure.frame
+    self.debug       = False
+
+    self.torquemode  = 1
+    self.torqueaxis  = 2
+    self.rotzeroerr  = True
+    self.rotdamping  = False
+    self.rotlimited  = False
+    self.tfbdamping  = False
+    self.maintainjr  = False
+    self.direction   = 1
+    self.angerr_tol  = 1.0*RPD
+    self.angvel_max  = TWOPI
+    self.manip_joint = None
     
   def debugOn(self)     : self.debug = True
   def debugOff(self)    : self.debug = False
   def toggleDebug(self) : self.debug = not self.debug
     
   def resetConfig(self):
-    
-    self.torquemode = 1
-    self.torqueaxis = 2
-    self.rotzeroerr = True
-    self.rotdamping = False
-    self.rotlimited = False
-    self.tfbdamping = False    
-    self.direction  = 1
+
+    self.torquemode  = 1
+    self.torqueaxis  = 2
+    self.rotzeroerr  = True
+    self.rotdamping  = False
+    self.rotlimited  = False
+    self.tfbdamping  = False
+    self.maintainjr  = False
+    self.direction   = 1
+    self.manip_joint = None
     
   def printConfig(self):
     
@@ -92,7 +97,11 @@ class Control:
         print("Non-Forcing Axis Rotation Error Limiting ON")
       else :
         print("Non-Forcing Axis Rotation Error Limiting OFF")
-   
+      if self.maintainjr :
+        print("Maintain manipulated joint rotation ON")
+      else :
+        print("Maintain manipulated joint rotation OFF")
+
     return set 
     
   def setTorqueModeOn(self)  : self.torquemode = 1
@@ -154,10 +163,18 @@ class Control:
     # Toggle rotation limited to torqued axis
       set = True
       self.rotlimited = not self.rotlimited
-      if self.rotlimited : 
+      if self.rotlimited :
         print("Non-Forcing Axis Rotation Error Limiting ON")
-      else          : 
+      else :
         print("Non-Forcing Axis Rotation Error Limiting OFF")
+    elif key == 'm' or key == 'M' :
+    # Toggle maintain manipulated joint rotation
+      set = True
+      self.maintainjr = not self.maintainjr
+      if self.maintainjr :
+        print("Maintain manipulated joint rotation ON")
+      else :
+        print("Maintain manipulated joint rotation OFF")
     elif key == 't' or key == 'T' :
     # Toggle torque feedback rotational damping
       set = True
@@ -193,7 +210,10 @@ class Control:
           (name, t, p, F1, T1) )
     print("%s : t=%8.4f, p=%1d, F2=%10.3f, T2=%10.3f" % \
           (name, t, p, F2, T2) )
-    
+
+  def setManipJoint(self, joint):
+    self.manip_joint = joint
+
   def applyJointDamping(self, t, tstep):
   
     if not self.frame : return
@@ -289,7 +309,8 @@ class Control:
         # This motor axis can rotate
         if k == self.torqueaxis :
           angle = m.getAngle(k)
-          if  angle > loStop and angle < hiStop :
+          if  angle > loStop-self.angerr_tol and \
+              angle < hiStop+self.angerr_tol     :
             rotateAxisAtRate(m, k, self.direction*RATE)
             if show : 
               print("%s : t=%8.4f, p=%1d, angle=%6.2f - axis %d forcing" % \
@@ -339,7 +360,15 @@ class Control:
             if ( m.getBody(1).solid.wire ) :
               # Joint selected - Apply forcing and limiting torques 
               self.applyForcingTorque(t, tstep, m)
+            elif self.frame.figure.lastStateJointManip() :
+              # Was manipulating a joint but not now
+              if m.joint == self.manip_joint :
+                # This was the joint being manipulated - Remove forcing torque
+                if not self.maintainjr :
+                  removeTorqueFromAxis(m, self.torqueaxis)
+              if self.rotzeroerr :
+                # Joint not selected - Apply zero error restoring torques
+                self.applyRestoringTorque(t, tstep, m)
             elif self.rotzeroerr :
               # Joint not selected - Apply zero error restoring torques
               self.applyRestoringTorque(t, tstep, m)
-              
