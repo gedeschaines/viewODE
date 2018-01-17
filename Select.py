@@ -22,6 +22,9 @@ except:
   print("Error: This module requires PyOpenGL !!")
   sys.exit()
 
+#
+# Import viewODE module for vector math.
+
 try:
   from vecMath import *
 except:
