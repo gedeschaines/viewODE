@@ -18,6 +18,9 @@ except:
   print("Error: This module requires PyODE !!")
   sys.exit()
 
+#
+# Import viewODE module for vector math.
+
 try:
   from vecMath import *
 except:
@@ -247,7 +250,7 @@ def getAngVelVecFromEulerAngRates(motor, Rates):
   return (w0, w1, w2)
   
 def removeTorqueFromAxis(motor, axis):
-    
+
   motor.setParam(AMotorAxisParams[axis]['Vel'],  0.0)
   motor.setParam(AMotorAxisParams[axis]['FMax'], 0.0)
   
