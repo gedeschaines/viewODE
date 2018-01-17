@@ -8,12 +8,18 @@ import sys
 
 from math   import *
 from string import *
-  
+
+#
+# Import ODE module for joint and motor models.
+
 try:
   import ode
 except:
   print("Error: This module requires PyODE !!")
   sys.exit()
+
+#
+# Import viewODE module for motors and vector math.
 
 try:
   from Motors import *
