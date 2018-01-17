@@ -35,7 +35,7 @@ except:
   sys.exit()
 
 #
-# Import viewODE object class modules for solids selection and frame capture.
+# Import viewODE modules for rendered solids selection and image capture.
 
 try:
   from Select  import *
