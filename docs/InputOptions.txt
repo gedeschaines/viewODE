@@ -65,6 +65,7 @@ Control Class
     D = Toggle joint rotational damping On/Off
     E = Toggle zero error restoring torque Off/On
     L = Toggle non-forcing axis rotation error limiting On/Off
+    M = Toggle maintain manipulated joint rotation Off/On
     T = Toggle torque feedback rotational damping Off/On
   
   Mouse Button and Motion Options:
