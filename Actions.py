@@ -19,7 +19,7 @@ except:
   sys.exit(0)
 
 #
-# Import viewODE modules for humanoid figure joints and motors.
+# Import viewODE modules for humanoid figure joints, motors and vector math.
 
 try:
   from Joints import *
@@ -251,9 +251,8 @@ class Actions :
       if see :
         facing = self.turnTorsoTowardTarget(target, t, tstep)
         if facing :
-          self.kickFootTowardTarget(self.figure.r_foot, \
-                                    target,             \
-                                    t, tstep            )
+          self.kickFootTowardTarget(self.figure.r_foot,
+                                    target, t, tstep)
       
     if self.reaching :
       self.standFixed(t, tstep)
@@ -261,9 +260,9 @@ class Actions :
       if see :
         facing = self.turnTorsoTowardTarget(target, t, tstep)
         if facing :
-          self.reachHandTowardTarget(self.figure.r_shoulder, \
+          self.reachHandTowardTarget(self.figure.r_shoulder,
                                      target, t, tstep)
-          self.reachHandTowardTarget(self.figure.l_shoulder, \
+          self.reachHandTowardTarget(self.figure.l_shoulder,
                                      target, t, tstep)                    
           # self.reachHandsTowardTarget(target, t, tstep)
                                      
