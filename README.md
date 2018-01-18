@@ -30,7 +30,7 @@ The **viewODE** program presents an interactive display for three dimensional (3
 
 * Entering 'python viewODE.py' on a command shell line when in the root directory will open a **viewODE** window in which will be displayed a ground plane grid with the world reference coordinate system frame +X, +Y and +Z axes positioned at the world space origin as shown [here](./docs/start_image.png). Program status messages and debug output are printed to the command shell unless otherwise redirected.
 * Pressing the 'Z' key or clicking the right mouse button will initiate the simulation by displaying a humanoid figure standing on the ground plane and a solid sphere (target) positioned in front of the figure as shown [here](./docs/begin_image.png). Mouse motion while the middle button is pressed will rotate the view about the world space X and Y axes. Apparent rotation of the ground plane does not affect dynamics since gravitational force always remains in the -Y direction.
-* The figure is initially in a standing state and will actively attempt to remain standing by adjusting torques on the ankle, knee, hip, waist and neck joint motors. While the simulation is running, the user can change the following with key presses as described in the **./docs/InputOptions.txt** file.
+* The figure is initially in a standing state and will actively attempt to remain standing by adjusting torques on the ankle, knee, hip, waist and neck joint motors. While the simulation is running, key presses as documented in the **./docs/InputOptions.txt** file can change the following.
     * arm and leg bone shape (box or rod)
     * joint type (hinge or ball)
     * action mode (standing, suspended, striding, reaching, kicking or walking)
@@ -40,9 +40,9 @@ The **viewODE** program presents an interactive display for three dimensional (3
     * rendering mode (orthographic or perspective, selection volume rendering)
     * simulation modes (paused, reset, image capture)
     * debug output (render, actions and control)
-* Pressing the left mouse button while the mouse cursor is on a solid will select the solid for manipulation. The selected solid is rendered as a wire frame. If the target sphere is selected, it can be moved to apply an impact force on the figure or to influence the figure's reaction while in the reaching or kicking mode. If the selected solid is attached to the figure's frame, then the figure is placed in the suspension state and a force or torque is applied to the solid.
+* Pressing the left mouse button while the mouse cursor is on a solid will select the solid for manipulation. The selected solid is rendered as a wire frame. If the target sphere is selected, it can be moved to apply an impact force on the figure or to influence the figure's reaction while in reaching or kicking mode. If the selected solid is attached to the figure's frame, then the figure is placed in suspended mode and a force or torque is applied to the solid.
     * A grabbing force is applied to solids corresponding to these body parts: toes, foot, shin, thigh, pelvis, torso, hand, forearm, upper arm and head.
-    * A motor torque is applied to joints corresponding these body parts: ball of foot, ankle, knee, hip, waist, wrist, elbow, shoulder and neck.
+    * A motor torque is applied to joints corresponding to these body parts: ball of foot, ankle, knee, hip, waist, wrist, elbow, shoulder and neck.
 * To collect debug print data, redirect shell output to a text file when invoking **viewODE** such as: 'python viewODE.py 1>output.txt 2>&1'. Specific joint data records can be extracted from the output file and written to another text file using a utility such as **grep**, and the extracted joint data records file can then be processed with **./util/txt2dat.py** to produce a data file suitable for input to the **xgraph** program.
 * The simulation can be paused/resumed by pressing the 'Z' key or by pressing/holding/releasing the right mouse button.
 * To terminate the program, press the 'esc' key or close the **viewODE** window.
@@ -56,3 +56,9 @@ The **viewODE** program presents an interactive display for three dimensional (3
 
 * For install or usage issues concerning ODE and PyODE, consult the appropriate document, wiki, forum or mailing list provided at the SourceForge projects for [Open Dynamics Engine](https://sourceforge.net/projects/opende/) and [Python-ODE Bindings](https://sourceforge.net/projects/pyode/) or at the original [ODE](http://ode.org/) and [PyODE](http://pyode.sourceforge.net/) web sites. Providers of distribution packages for ODE and PyODE may also be helpful in resolving installation issues.
 * For guidance on exploring the features and capabilites of **viewODE**, consult the howto tutorials provided in the **./docs** subdirectory.
+
+### Disclaimers ###
+
+* See the file [DISCLAIMER-GaryDeschaines](./DISCLAIMER-GaryDeschaines)
+* See the file [DISCLAIMER-PyODE](./DISCLAIMER-PyODE)
+* See the file [DISCLAIMER-MattHeinzen](./DISCLAIMER-MattHeinzen)
