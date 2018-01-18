@@ -9,6 +9,11 @@
 # + Matthias Baas and Pierre Gay for the Python-ODE Bindings examples program
 #   tutorial3.py available at https://sourceforge.net/projects/pyode/ which was
 #   used as a basis for the solid models.
+#
+# Disclaimers
+#
+#   See the file DISCLAIMER-GaryDeschaines
+#   See the file DISCLAIMER-PyODE
 
 from sys  import exit
 from math import pi, sqrt

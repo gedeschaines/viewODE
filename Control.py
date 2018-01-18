@@ -3,6 +3,10 @@
 # viewODE humanoid robotic figure control definition module.
 #
 # Originally by Gary Deschaines, 2009.
+#
+# Disclaimer
+#
+#   See the file DISCLAIMER-GaryDeschaines
 
 from sys import exit
 

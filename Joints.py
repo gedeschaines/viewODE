@@ -3,6 +3,17 @@
 # viewODE figure frame joints definition module.
 #
 # Originally by Gary Deschaines, 2009.
+#
+# Attributions
+#
+# + Matt Heinzen for PyODE Ragdoll Physics Tutorial program ragdoll-pyode-tutorial.py
+#   available at http://monsterden.net/software/ragdoll-pyode-tutorial which was used
+#   as a basis for the joint functions herein.
+#
+# Disclaimers
+#
+#   See file DISCLAIMER-GaryDeschaines
+#   See file DISCLAIMER-MatHeinzen
 
 from sys    import exit
 

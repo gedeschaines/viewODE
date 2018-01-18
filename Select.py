@@ -3,6 +3,10 @@
 # viewODE figure rendered solid selection definition module.
 #
 # Originally by Gary Deschaines, 2009.
+#
+# Disclaimer
+#
+#  See the file DISCLAIMER-GaryDeschaines
 
 from sys import exit
 

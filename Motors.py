@@ -3,6 +3,10 @@
 # viewODE figure frame motors definition module.
 #
 # Originally by Gary Deschaines, 2009.
+#
+# Disclaimer
+#
+#   See the file DISCLAIMER-GaryDeschaines
 
 from sys  import exit
 from math import cos, sin

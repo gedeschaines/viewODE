@@ -3,6 +3,10 @@
 # viewODE humanoid robotic figure actions definition module.
 #
 # Originally by Gary Deschaines, 2009.
+#
+# Disclaimer
+#
+#   See the file DISCLAIMER-GaryDeschaines
 
 from sys import exit
 from math import asin

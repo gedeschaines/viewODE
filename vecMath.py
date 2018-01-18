@@ -9,6 +9,11 @@
 # + Matt Heinzen for PyODE Ragdoll Physics Tutorial program ragdoll-pyode-tutorial.py
 #   available at http://monsterden.net/software/ragdoll-pyode-tutorial which was used
 #   as a basis for the vector math functions herein.
+#
+# Disclaimers
+#
+#   See the file DISCLAIMER-GaryDeschaines
+#   See the file DISCLAIMER-MatHeinzen
 
 from math import pi, sqrt, acos, atan2
 

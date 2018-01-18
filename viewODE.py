@@ -18,6 +18,12 @@
 #   available at http://monsterden.net/software/ragdoll-pyode-tutorial which was used
 #   as a basis for vector math functions and jointed rigid body modeling of a humanoid
 #   figure.
+#
+# Disclaimers
+#
+#   See the file DISCLAIMER-GaryDeschaines
+#   See the file DISCLAIMER-PyODE
+#   See the file DISCLAIMER-MattHeinzen
 
 from sys import exit, path
 from os import getcwd
@@ -85,7 +91,6 @@ def create_target_object(world, space, px, py, pz):
   @type  py: float
   @param pz: World space position z coordinate.
   @type  pz: float
-
 
   @return: ((x,y,z),target) -- position coordinates in world space for
            center of the target body and the target's ODE body object.

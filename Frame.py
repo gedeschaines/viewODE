@@ -3,6 +3,17 @@
 # viewODE humanoid jointed rigid body figure frame definition module.
 #
 # Originally by Gary Deschaines, 2009.
+#
+# Attributions
+#
+# + Matt Heinzen for PyODE Ragdoll Physics Tutorial program ragdoll-pyode-tutorial.py
+#   available at http://monsterden.net/software/ragdoll-pyode-tutorial which was used
+#   as a basis for the humanoid figure frame herein.
+#
+# Disclaimers
+#
+#   See the file DISCLAIMER-GaryDeschaines
+#   See the file DISCLAIMER-MatHeinzen
 
 from sys import exit
 

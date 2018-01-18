@@ -9,6 +9,11 @@
 # + Matthias Baas and Pierre Gay for the Python-ODE Bindings examples program
 #   tutorial3.py available at https://sourceforge.net/projects/pyode/ which was
 #   used as a basis for solids rendering.
+#
+# Disclaimers
+#
+#   See the file DISCLAIMER-GaryDeschaines
+#   See the file DISCLAIMER-PyODE
 
 from sys import argv, exit
 
