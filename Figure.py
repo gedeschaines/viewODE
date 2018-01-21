@@ -56,7 +56,18 @@ try:
   from vecMath import *
 except:
   print("Error: vecMath not installed properly !!")
-  
+
+ANIMATION_STATES = ( "Initialize",
+                     "Stand Still",
+                     "Stand Fixed",
+                     "Suspended",
+                     "Joint Manipulation",
+                     "Solid Manipulation",
+                     "React",
+                     "Action",
+                     "Resting",
+                     "Standup" )
+
 class Figure:
     
   def __init__(self, world, space, floor, sfac):
@@ -73,7 +84,6 @@ class Figure:
     @param sfac: The figure size scaling factor.
     @param sfac: float
     """
-    
     self.world      = world
     self.space      = space
     self.floor      = floor
@@ -83,17 +93,15 @@ class Figure:
     self.frame      = Frame(self)
     self.control    = Control(self)
     self.actions    = Actions(self)
-    self.state      = 0
-    self.last_state = 0
-    
-    # Dynamic states 
+
+    # Dynamic figure states
 
     self.cgp_r_foot = []
     self.cop_r_foot = (0.0, 0.0, 0.0)
     self.cgp_l_foot = []
     self.cop_l_foot = (0.0, 0.0, 0.0)
     self.zmp        = (0.0, 0.0, 0.0)
-     
+
     # Animation States
     
     self.INITIALIZE  = 0
@@ -106,6 +114,28 @@ class Figure:
     self.ACTION      = 7
     self.RESTING     = 8
     self.STANDUP     = 9
+
+    # Animation State Parameters
+
+    self.state      = 0
+    self.last_state = None
+    self.body       = None  # grabbed body
+    self.target     = None  # rendered target
+    self.t          = 0.0
+    self.tstep      = 0.0
+
+    # Animation State Methods
+
+    self.AnimationMethods = {self.INITIALIZE: self.animationInitialize,
+                             self.STANDSTILL: self.animationStandStill,
+                             self.STANDFIXED: self.animationStandFixed,
+                             self.SUSPENDED: self.animationSuspended,
+                             self.JOINT_MANIP: self.animationJointManip,
+                             self.SOLID_MANIP: self.animationSolidManip,
+                             self.REACT: self.animationReact,
+                             self.ACTION: self.animationAction,
+                             self.RESTING: self.animationResting,
+                             self.STANDUP: self.animationStandUp}
 
     # Physical Specifications
     
@@ -364,6 +394,9 @@ class Figure:
     
     self.frame.delete()
 
+    self.body       = None
+    self.target     = None
+
     self.head       = None
     self.neck       = None
     self.torso      = None
@@ -465,13 +498,17 @@ class Figure:
     
     self.origin = (0.0, 0.0, 0.0)
     self.refpos = (0.0, 0.0, 0.0)
-    
+
     self.cgp_r_foot = []
     self.cop_r_foot = (0.0, 0.0, 0.0)
     self.cgp_l_foot = []
     self.cop_l_foot = (0.0, 0.0, 0.0)
     self.zmp        = (0.0, 0.0, 0.0)
-        
+
+    self.last_state = None
+    self.body       = None
+    self.target     = None
+
     self.frame.resetConfig()
     self.control.resetConfig()
     self.actions.resetConfig()
@@ -491,11 +528,13 @@ class Figure:
     
   def setAnimationState(self, state):
 
+    if not (state == self.state) :
+      print("Setting animation state to %s" % ANIMATION_STATES[state])
     self.last_state = self.state
     self.state = state
     
   def getAnimationState(self):
-    
+
     return self.state
     
   def resetAnimation(self):
@@ -503,9 +542,12 @@ class Figure:
     self.actions.resetConfig()
     self.actions.printConfig()
     self.setAnimationState(self.INITIALIZE)
-    self.last_state = 0
+    self.last_state = None
+    self.body       = None
+    self.target     = None
 
   def lastStateJointManip(self):
+
     return self.last_state == self.JOINT_MANIP
 
   def doKeyPress(self, key):
@@ -535,8 +577,116 @@ class Figure:
       return True
       
     return False
-    
+
+  def animationInitialize(self):
+    # Initialize state -- enable zero error torque
+    self.control.setTorqueModeOn()
+    self.control.setZeroErrorOn()
+    if self.actions.inSuspendMode() :
+      self.setAnimationState(self.SUSPENDED)
+    else :
+      self.setAnimationState(self.STANDFIXED)
+    # Invoke initial animation method
+    self.invokeAnimationMethod(self.AnimationMethods[self.state])
+
+  def animationStandStill(self):
+    # Stand still state -- the figure is initially
+    # standing upright with it's head at the reference
+    # position.  It's posture is maintained by zero
+    # error restoring torques applied to all joints,
+    # but no attempt is made to keep the figure upright.
+    self.control.applyMotorTorques(self.t, self.tstep)
+    self.control.applyJointDamping(self.t, self.tstep)
+
+  def animationStandFixed(self):
+    # Stand fixed state -- the figure is standing
+    # with it's head initially at the reference position.
+    # This upright posture is maintained by applying
+    # torques to the waist, hip, knee and ankle joints
+    # in order to keep the figure balanced with its
+    # center of mass position located in the figure's
+    # sagittal plane, and the center of gravity in the
+    # ground plane between the ankle joints and midpoints
+    # of the feet. The head remains level and pointed
+    # forward, the torso is prevencted from swiveling,
+    # but the arms and hands are free to move about.
+    self.actions.standFixed(self.t, self.tstep)
+    self.control.setZeroErrorOff()
+    self.control.applyMotorTorques(self.t, self.tstep)
+    self.control.applyJointDamping(self.t, self.tstep)
+
+  def animationSuspended(self):
+    # Suspended state -- use force applied to
+    # figure's head to keep the figure standing
+    # with its head at the reference position
+    self.actions.standSuspended()
+    self.control.applyMotorTorques(self.t, self.tstep)
+    self.control.applyJointDamping(self.t, self.tstep)
+
+  def animationJointManip(self):
+    # Figure joint grabbed -- use force applied to
+    # figure's head to keep the figure standing
+    # with its head at the reference position
+    self.actions.standSuspended()
+    # Apply joint motor torques and damping
+    self.control.applyMotorTorques(self.t, self.tstep)
+    self.control.applyJointDamping(self.t, self.tstep)
+
+  def animationSolidManip(self):
+    # Figure body grabbed -- use force applied to
+    # figure's head to keep the figure standing
+    # with its head at the reference position
+    self.actions.standSuspended()
+    # Apply apply forces, torques and damping
+    self.control.applyMotorTorques(self.t, self.tstep)
+    self.control.applyJointDamping(self.t, self.tstep)
+
+  def animationReact(self):
+    # Let figure react to target motion -- apply
+    # forces, torques and damping
+    self.actions.performAction(self.target, self.t, self.tstep)
+    self.control.setZeroErrorOff()
+    self.control.applyMotorTorques(self.t, self.tstep)
+    self.control.applyJointDamping(self.t, self.tstep)
+
+  def animationAction(self):
+    # Let figure perform selected action -- apply
+    # forces, torques and damping
+    self.actions.performAction(self.target, self.t, self.tstep)
+    self.control.setZeroErrorOff()
+    self.control.applyMotorTorques(self.t, self.tstep)
+    self.control.applyJointDamping(self.t, self.tstep)
+
+  def animationResting(self):
+    # Resting state -- the figure's posture depends
+    # upon joint torque mode and zero error restoring
+    # states.  If torque mode is OFF, the figure is
+    # limp, like a rag doll; if ON and zero error
+    # restoring is ON, the figure will return to its
+    # initial posture but not necessarily its initial
+    # position
+    self.control.applyMotorTorques(self.t, self.tstep)
+    self.control.applyJointDamping(self.t, self.tstep)
+
+  def animationStandUp(self):
+    # Standing up state -- move figure's head to
+    # new reference position
+    if self.actions.standUp():
+      # Figure is now standing -- transition to
+      # initialize state
+      self.setAnimationState(self.INITIALIZE)
+    self.control.applyMotorTorques(self.t, self.tstep)
+    self.control.applyJointDamping(self.t, self.tstep)
+
+  def invokeAnimationMethod(self, method):
+    if method : method()
+
   def updateAnimation(self, body, target, t, tstep):
+
+    self.body = body
+    self.target = target
+    self.t = t
+    self.tstep = tstep
      
     if not self.frame.joints : 
       # Figure has collapsed
@@ -583,104 +733,9 @@ class Figure:
           self.control.setTorqueModeOn()
           self.control.setZeroErrorOn()
           self.setAnimationState(self.STANDSTILL)
-          
-    if self.state == self.INITIALIZE :
-      # Initialize state -- enable zero error torque
-      self.control.setTorqueModeOn()
-      self.control.setZeroErrorOn()
-      if self.actions.inSuspendMode() :
-        self.setAnimationState(self.SUSPENDED)
-      else :
-        self.setAnimationState(self.STANDFIXED)
-      
-    if self.state == self.STANDSTILL:
-      # Stand still state -- the figure is initially
-      # standing upright with it's head at the reference
-      # position.  It's posture is maintained by zero
-      # error restoring torques applied to all joints,
-      # but no attempt is made to keep the figure upright.
-      self.control.applyMotorTorques(t,tstep)
-      self.control.applyJointDamping(t,tstep)
-      
-    elif self.state == self.STANDFIXED:
-      # Stand fixed state -- the figure is standing
-      # with it's head initially at the reference position.
-      # This upright posture is maintained by applying 
-      # torques to the waist, hip, knee and ankle joints
-      # in order to keep the figure balanced with its
-      # center of mass position located in the figure's
-      # sagittal plane, and the center of gravity in the 
-      # ground plane between the ankle joints and midpoints
-      # of the feet. The head remains level and pointed
-      # forward, the torso is prevencted from swiveling, 
-      # but the arms and hands are free to move about.
-      self.actions.standFixed(t,tstep)
-      self.control.setZeroErrorOff()
-      self.control.applyMotorTorques(t,tstep)
-      self.control.applyJointDamping(t,tstep)
-      
-    elif self.state == self.SUSPENDED :
-      # Suspended state -- use force applied to
-      # figure's head to keep the figure standing
-      # with its head at the reference position
-      self.actions.standSuspended()
-      self.control.applyMotorTorques(t,tstep)
-      self.control.applyJointDamping(t,tstep) 
-          
-    elif self.state == self.JOINT_MANIP :
-      # Figure joint grabbed -- use force applied to
-      # figure's head to keep the figure standing
-      # with its head at the reference position
-      self.actions.standSuspended()
-      # Apply joint motor torques and damping
-      self.control.applyMotorTorques(t,tstep)
-      self.control.applyJointDamping(t,tstep)
-          
-    elif self.state == self.SOLID_MANIP :
-      # Figure body grabbed -- use force applied to
-      # figure's head to keep the figure standing
-      # with its head at the reference position
-      self.actions.standSuspended()
-      # Apply apply forces, torques and damping
-      self.control.applyMotorTorques(t,tstep)
-      self.control.applyJointDamping(t,tstep)
 
-    elif self.state == self.REACT :
-      # Let figure react to target motion -- apply 
-      # forces, torques and damping
-      self.actions.performAction(target, t, tstep)
-      self.control.setZeroErrorOff()
-      self.control.applyMotorTorques(t,tstep)
-      self.control.applyJointDamping(t,tstep)
-        
-    elif self.state == self.ACTION :
-      # Let figure perform selected action -- apply 
-      # forces, torques and damping
-      self.actions.performAction(target, t, tstep)
-      self.control.setZeroErrorOff()
-      self.control.applyMotorTorques(t,tstep)
-      self.control.applyJointDamping(t,tstep)
-
-    elif self.state == self.RESTING :
-      # Resting state -- the figure's posture depends
-      # upon joint torque mode and zero error restoring 
-      # states.  If torque mode is OFF, the figure is
-      # limp, like a rag doll; if ON and zero error
-      # restoring is ON, the figure will return to its
-      # initial posture but not necessarily its initial
-      # position
-      self.control.applyMotorTorques(t,tstep)
-      self.control.applyJointDamping(t,tstep)
-        
-    elif self.state == self.STANDUP :
-      # Standing up state -- move figure's head to
-      # new reference position
-      if self.actions.standUp() : 
-        # Figure is now standing -- transition to 
-        # initialize state
-        self.setAnimationState(self.INITIALIZE)
-      self.control.applyMotorTorques(t,tstep)
-      self.control.applyJointDamping(t,tstep)
+    # Invoke animation method corresponding to current state
+    self.invokeAnimationMethod(self.AnimationMethods[self.state])
 
   def setFigureHeight(self):
     
