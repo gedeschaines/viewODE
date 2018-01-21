@@ -494,7 +494,7 @@ class Render:
     """
     Mouse button processing.
     """
-    if self.figure == None : return
+    if self.figure == None : return None
     
     if self.selector.doMouseButton(b, s, mx, my) :
       # Left mouse button pressed or released
