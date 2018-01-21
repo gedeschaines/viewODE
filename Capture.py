@@ -83,7 +83,7 @@ class Capture:
                                 
       # Save image as a JPEG file
       scount = format_string("%04d",self.count)
-      file   = "./zimages/" + self.filename + "_" + scount + ".jpg"
+      file   = "./zimg/" + self.filename + "_" + scount + ".jpg"
       image.save(file,"JPEG")
     
       # Increment image counter
