@@ -326,14 +326,14 @@ def grab(body, tstep):
       if body == target :
         if d_mag > 0.0 : 
           # grab force
-          f     = body.mass*(2.0/tstep)
+          f     = body.mass*(1.0/tstep)
           f_vec = vecMulS(d_vec, f)
           body.addForce(f_vec)
       elif figure.frame.joints == [] :
         # Collapsed figure
         if d_mag > 0.0 : 
           # grab force
-          f     = body.mass*(2.0/tstep) 
+          f     = body.mass*(1.0/tstep)
           f_vec = vecMulS(d_vec, f)
           body.addForce(f_vec)          
         else :      
@@ -432,6 +432,7 @@ def _idlefunc():
     # State 0: Create ODE figure and target 
     if state == 0 :
       figure.createFrame(0.0, 0.0, -2.0)
+      ##_keyfunc('\x20', x, y)
       (tgtpos, target) = create_target_object( world, \
                                                space, \
                                                0.0, 3.5, 2.0 )
@@ -513,7 +514,7 @@ if __name__ == '__main__':
   frame_rate = 25
   frame_time = int(1000.0/float(frame_rate))  # in milliseconds rounded
   frame_time = dt_msec*(frame_time/dt_msec)   # to multiple of dt_msec
-  filename   = "image"
+  filename   = "img"
 
   # Initialize OpenGL renderer-selector and PIL captor
   x        = 50
