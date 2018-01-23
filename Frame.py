@@ -234,10 +234,10 @@ class Frame:
       joint = attachBallJoint(frame,'L',pelvis,lhip,specs)
       motor = attachBallAMotor(frame,joint,specs)
     else :
-      joint = attachHinge2Joint(frame,'R',pelvis,rhip,specs)
-      motor = attachHinge2AMotor(frame,joint,specs)
-      joint = attachHinge2Joint(frame,'L',pelvis,lhip,specs)
-      motor = attachHinge2AMotor(frame,joint,specs)
+      joint = attachUniversalJoint(frame,'R',pelvis,rhip,specs)
+      motor = attachUniversalAMotor(frame,joint,specs)
+      joint = attachUniversalJoint(frame,'L',pelvis,lhip,specs)
+      motor = attachUniversalAMotor(frame,joint,specs)
 
     # Waist joint
     
@@ -297,8 +297,8 @@ class Frame:
       joint = attachBallJoint(frame,'C',torso,waist,specs)
       motor = attachBallAMotor(frame,joint,specs)
     else :
-      joint = attachHinge2Joint(frame,'C',torso,waist,specs)
-      motor = attachHinge2AMotor(frame,joint,specs)
+      joint = attachUniversalJoint(frame,'C',torso,waist,specs)
+      motor = attachUniversalAMotor(frame,joint,specs)
     
     # Create right and left arms
     
@@ -324,10 +324,10 @@ class Frame:
       joint = attachBallJoint(frame,'L',torso,lshoulder,specs)
       motor = attachBallAMotor(frame,joint,specs)
     else :
-      joint = attachHinge2Joint(frame,'R',torso,rshoulder,specs)
-      motor = attachHinge2AMotor(frame,joint,specs)
-      joint = attachHinge2Joint(frame,'L',torso,lshoulder,specs)
-      motor = attachHinge2AMotor(frame,joint,specs)
+      joint = attachUniversalJoint(frame,'R',torso,rshoulder,specs)
+      motor = attachUniversalAMotor(frame,joint,specs)
+      joint = attachUniversalJoint(frame,'L',torso,lshoulder,specs)
+      motor = attachUniversalAMotor(frame,joint,specs)
     
     # Neck joint
     
@@ -382,8 +382,8 @@ class Frame:
       joint = attachBallJoint(frame,'C',head,neck,specs)
       motor = attachBallAMotor(frame,joint,specs)
     else :
-      joint = attachHinge2Joint(frame,'C',head,neck,specs)
-      motor = attachHinge2AMotor(frame,joint,specs)
+      joint = attachUniversalJoint(frame,'C',head,neck,specs)
+      motor = attachUniversalAMotor(frame,joint,specs)
     
     return ( (hx,hy,hz) )
 
@@ -491,8 +491,8 @@ class Frame:
       joint = attachBallJoint(frame,side,foot,ball,specs)
       motor = attachBallAMotor(frame,joint,specs)
     else :
-      joint = attachHinge2Joint(frame,side,foot,ball,specs)
-      motor = attachHinge2AMotor(frame,joint,specs)
+      joint = attachUniversalJoint(frame,side,foot,ball,specs)
+      motor = attachUniversalAMotor(frame,joint,specs)
       #joint = attachHingeJoint(frame,side,foot,ball,specs)
       #motor = attachHingeAMotor(frame,joint,specs)
     
@@ -555,8 +555,8 @@ class Frame:
       joint = attachBallJoint(frame,side,shin,ankle,specs)
       motor = attachBallAMotor(frame,joint,specs)
     else :
-      joint = attachHinge2Joint(frame,side,shin,ankle,specs)
-      motor = attachHinge2AMotor(frame,joint,specs)
+      joint = attachUniversalJoint(frame,side,shin,ankle,specs)
+      motor = attachUniversalAMotor(frame,joint,specs)
       #joint = attachHingeJoint(frame,side,shin,ankle,specs)
       #motor = attachHingeAMotor(frame,joint,specs)
     
@@ -755,8 +755,8 @@ class Frame:
       joint = attachBallJoint(frame,side,upper_arm,elbow,specs)
       motor = attachBallAMotor(frame,joint,specs)
     else :
-      joint = attachHinge2Joint(frame,side,upper_arm,elbow,specs)
-      motor = attachHinge2AMotor(frame,joint,specs)
+      joint = attachUniversalJoint(frame,side,upper_arm,elbow,specs)
+      motor = attachUniversalAMotor(frame,joint,specs)
     
     # Fore_arm
     
