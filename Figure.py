@@ -306,7 +306,7 @@ class Figure:
         'HiStop' : [ 135.0*RPD, 0.0, 0.0],
         'Dratio' : [    0.2, 0.0, 0.0],
         'FMax'   : [ 1000.0, 0.0, 0.0],
-        'AMFMax' : [ 8000.0, 0.0, 0.0]
+        'AMFMax' : [10000.0, 0.0, 0.0]
       },
       'hip' : \
       { 'Axes' : { 'R-0' : {'mode' : 1, 'axis' : ( 0.0, 0.0, 1.0)},
@@ -320,7 +320,7 @@ class Figure:
         'HiStop' : [ 30.0*RPD,  30.0*RPD, 120.0*RPD],
         'Dratio' : [    0.2,     0.2,    0.2],
         'FMax'   : [  1000.0, 1000.0, 1000.0],
-        'AMFMax' : [  8000.0, 8000.0, 8000.0]
+        'AMFMax' : [  8000.0, 8000.0,20000.0]
       },
       'wrist' : \
       { 'Axes' : { 'R-0' : {'mode' : 1, 'axis' : ( 0.0, 0.0, 1.0)},
@@ -546,7 +546,11 @@ class Figure:
     self.body       = None
     self.target     = None
 
-  def lastStateJointManip(self):
+  def currStateJointManip(self):
+
+    return self.state == self.JOINT_MANIP
+
+  def prevStateJointManip(self):
 
     return self.last_state == self.JOINT_MANIP
 
@@ -624,10 +628,10 @@ class Figure:
     self.control.applyJointDamping(self.t, self.tstep)
 
   def animationJointManip(self):
-    # Figure joint grabbed -- use force applied to
-    # figure's head to keep the figure standing
-    # with its head at the reference position
-    self.actions.standSuspended()
+    # Figure joint grabbed
+    if self.actions.inSuspendMode():
+      # apply external force to figure's head
+      self.actions.standSuspended()
     # Apply joint motor torques and damping
     self.control.applyMotorTorques(self.t, self.tstep)
     self.control.applyJointDamping(self.t, self.tstep)
@@ -636,7 +640,9 @@ class Figure:
     # Figure body grabbed -- use force applied to
     # figure's head to keep the figure standing
     # with its head at the reference position
-    self.actions.standSuspended()
+    if self.actions.inSuspendMode():
+      # apply external force to figure's head
+      self.actions.standSuspended()
     # Apply apply forces, torques and damping
     self.control.applyMotorTorques(self.t, self.tstep)
     self.control.applyJointDamping(self.t, self.tstep)
@@ -660,7 +666,7 @@ class Figure:
   def animationResting(self):
     # Resting state -- the figure's posture depends
     # upon joint torque mode and zero error restoring
-    # states.  If torque mode is OFF, the figure is
+    # states. If torque mode is OFF, the figure is
     # limp, like a rag doll; if ON and zero error
     # restoring is ON, the figure will return to its
     # initial posture but not necessarily its initial
