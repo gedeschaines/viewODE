@@ -303,10 +303,10 @@ class Render:
     glPushMatrix()
     glRotatef(self.rotationY, 0.0, 1.0, 0.0)
     glRotatef(self.rotationX, 1.0, 0.0, 0.0)
-    for j in range(6):
-      z = 3.0 - j
-      for i in range(6):
-        x = -3.0 + i
+    for j in range(8):
+      z = 4.0 - j
+      for i in range(8):
+        x = -4.0 + i
         glBegin(GL_LINE_LOOP)
         glVertex3f(x      , 0.0, z      )
         glVertex3f(x      , 0.0, z - 1.0)
