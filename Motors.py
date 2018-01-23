@@ -119,25 +119,25 @@ def attachBallAMotor(frame,joint,specs):
     
   return motor
   
-def attachHinge2AMotor(frame,joint,specs):
+def attachUniversalAMotor(frame,joint,specs):
   """
-  Instantiates an ODE AMotor object to attach between the given Hinge2
-  joint's joined bodies as defined by the given figure joint specs,
-  appends the motor to the given frame motors list, and links the
-  motor to the given joint's 2nd body solid.
+  Instantiates an ODE AMotor object to attach between the given
+  Universal joint's joined bodies as defined by the given figure
+  joint specs, appends the motor to the given frame motors list,
+  and links the motor to the given joint's 2nd body solid.
 
   @param frame: A viewODE figure frame for the instantiated motor.
   @type  frame: viewODE Frame object
   @param joint: A viewODE figure frame joint to be driven by the instantiated motor.
-  @type  joint: ODE Hinge2Joint object
-  @param specs: Figure joint and motor specs for the given hinge2 joint.
+  @type  joint: ODE UniversalJoint object
+  @param specs: Figure joint and motor specs for the given Universal joint.
   @type  specs: viewODE Figure class JointSpecs dictionary entry for the given joint
 
-  @return: The instantiated motor attached to the given hinge2 joint.
+  @return: The instantiated motor attached to the given Universal joint.
   @rtype: ODE AMotor object
   """
-  if ( joint.type != "Hinge2" ) :
-    print("attachHinge2Amotor: Joint type %s not Hinge2!" % \
+  if ( joint.type != "Universal" ) :
+    print("attachUniversalAmotor: Joint type %s not Universal!" % \
       (joint.type) )
     exit(1)
       
@@ -253,8 +253,18 @@ def getAngVelVecFromEulerAngRates(motor, Rates):
   
 def removeTorqueFromAxis(motor, axis):
 
-  motor.setParam(AMotorAxisParams[axis]['Vel'],  0.0)
-  motor.setParam(AMotorAxisParams[axis]['FMax'], 0.0)
+  naxis = motor.getNumAxes()
+
+  if ( axis < 0 ) : return
+  if ( axis > naxis ) : return
+
+  if axis == naxis :
+    for k in range(naxis) :
+      motor.setParam(AMotorAxisParams[k]['Vel'], 0.0)
+      motor.setParam(AMotorAxisParams[k]['FMax'], 0.0)
+  else :
+    motor.setParam(AMotorAxisParams[axis]['Vel'],  0.0)
+    motor.setParam(AMotorAxisParams[axis]['FMax'], 0.0)
   
 def rotateAxisAtRate(motor, axis, rate):
     
