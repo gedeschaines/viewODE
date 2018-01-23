@@ -1115,7 +1115,7 @@ class Actions :
     Wlos = self.calcLosRateAwrtB(target, joint.getBody(1))
     Rvec = vecAdd(Rvec,vecMulS(Wlos,-1.2))
     
-    if isinstance(joint, ode.Hinge2Joint) :
+    if isinstance(joint, ode.UniversalJoint) :
       # Get shoulder joint motor axes in world space
       jaxis0 = motor.getAxis(0)
       jaxis2 = motor.getAxis(2)

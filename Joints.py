@@ -138,12 +138,12 @@ def attachBallJoint(frame, side, body1, body2, specs):
     
   return joint
     
-def attachHinge2Joint(frame,side,body1,body2,specs):
+def attachUniversalJoint(frame,side,body1,body2,specs):
   """
-  Instantiates an ODE Hinge2Joint object to attach between the two given
-  bodies as defined by the given figure joint specs, appends the joint
-  to the given frame joints list, and links the joint to the joint's
-  2nd body solid.
+  Instantiates an ODE UniversalJoint object to attach between the two
+  given bodies as defined by the given figure joint specs, appends
+  the joint to the given frame joints list, and links the joint to
+  the joint's 2nd body solid.
 
   @param frame: A viewODE figure frame for the instantiated joint.
   @type  frame: viewODE Frame object
@@ -153,18 +153,18 @@ def attachHinge2Joint(frame,side,body1,body2,specs):
   @type  body1: ODE body object
   @param body2: 2nd body of joint attachment.
   @type  body2: ODE body object
-  @param specs: Figure joint and motor specs for the given hinge2 joint.
+  @param specs: Figure joint and motor specs for the given joint.
   @type  specs: viewODE Figure class JointSpecs dictionary entry for the given joint
 
   @return: The instantiated joint.
-  @rtype: ODE Hinge2Joint object
+  @rtype: ODE UniversalJoint object
   """
   axis1  = axisFromSpecs(specs,side,0)
   axis2  = axisFromSpecs(specs,side,2)
   LoStop = specs['LoStop']
   HiStop = specs['HiStop']
     
-  joint = ode.Hinge2Joint(frame.world, frame.jointgroup)
+  joint = ode.UniversalJoint(frame.world, frame.jointgroup)
   joint.attach(body1, body2)
   (x, y, z) = body2.getPosition()
   if body2.solid.shape == "cone" : y += body2.solid.h/2.0
@@ -172,9 +172,11 @@ def attachHinge2Joint(frame,side,body1,body2,specs):
   joint.setAxis1( axis1 )
   joint.setAxis2( axis2 )
   joint.setFeedback(frame.feedback)
-  joint.setParam(ode.ParamLoStop, LoStop[0])
-  joint.setParam(ode.ParamHiStop, HiStop[0])
-  joint.type  = "Hinge2"
+  joint.setParam(ode.ParamLoStop,  LoStop[0])
+  joint.setParam(ode.ParamHiStop,  HiStop[0])
+  joint.setParam(ode.ParamLoStop2, LoStop[2])
+  joint.setParam(ode.ParamHiStop2, HiStop[2])
+  joint.type  = "Universal"
   joint.side  = side
   joint.specs = specs
   joint.label = jointLabel(joint)
@@ -380,7 +382,7 @@ def applyBallJointDamping(show, t, p, j, tfb, fb):
       motor.setParam(ode.ParamFMax2, FMax1)
       motor.setParam(ode.ParamFMax3, FMax2)
       
-def applyHinge2JointDampingTorque(show, t, p, j, fb):
+def applyUniversalJointDampingTorque(show, t, p, j, fb):
     
   # Get joint hinge axes in joint body 2 coordinates
   H1axis = unitVec( j.getBody(1).vectorFromWorld( j.getAxis1() ) )
@@ -430,12 +432,12 @@ def applyHinge2JointDampingTorque(show, t, p, j, fb):
   j.setParam(ode.ParamFMax,  FMax1)
   j.setParam(ode.ParamFMax2, FMax2)
     
-def applyHinge2JointDamping(show, t, p, j, tfb, fb):
+def applyUniversalJointDamping(show, t, p, j, tfb, fb):
     
   if tfb :
     if not fb : fb = j.getFeedback()
     if fb :
-      applyHinge2JointDampingTorque(show, t, p, j, fb)
+      applyUniversalJointDampingTorque(show, t, p, j, fb)
   else :
     Td1   = -j.specs['Dratio'][0]*j.getAngle1Rate()
     Td2   = -j.specs['Dratio'][2]*j.getAngle2Rate()
