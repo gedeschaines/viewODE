@@ -115,7 +115,7 @@ class Control:
     if self.rotzeroerr == True :
       self.rotzeroerr = False
       print("Zero error restoring OFF")
-    
+
   def setTorqueControl(self, key) :
     
     set = False
@@ -240,15 +240,16 @@ class Control:
           applyHingeJointDamping(show, t, pick, j, tfb, fb)
         else :
           j.setParam(ode.ParamFMax,  0.0)
-      elif isinstance(j, ode.Hinge2Joint) :
+      elif isinstance(j, ode.UniversalJoint) :
         if show :
           ang1 = j.getAngle1()
+          ang2 = j.getAngle2()
           ar1  = j.getAngle1Rate()
           ar2  = j.getAngle2Rate()
-          print("%s : t=%8.4f, p=%1d, ang1=%6.3f, ar1=%8.3f, ar2=%8.3f" % \
-                (name, t, pick, ang1, ar1, ar2) )
+          print("%s : t=%8.4f, p=%1d, ang1=%6.3f, ang2=%6.3f, ar1=%8.3f, ar2=%8.3f" % \
+                (name, t, pick, ang1, ang2, ar1, ar2) )
         if self.rotdamping :
-          applyHinge2JointDamping(show, t, pick, j, tfb, fb)
+          applyUniversalJointDamping(show, t, pick, j, tfb, fb)
         else : 
           j.setParam(ode.ParamFMax,  0.0)
           j.setParam(ode.ParamFMax2, 0.0)
@@ -320,7 +321,7 @@ class Control:
             removeTorqueFromAxis(m, k)
         elif self.rotlimited :
           error = m.getAngle(k)
-          if ( abs(error) > TOL ): 
+          if ( abs(error) > TOL ) :
             rotateAxisToZero(m, k, TOL, RATE)
             if show :
               print("%s : t=%8.4f, p=%1d, error=%6.2f - axis %d limiting" % \
@@ -352,21 +353,19 @@ class Control:
         if self.torquemode == 0 :
           # Remove all motor restoring torques
           if m.getMode() == ode.AMotorEuler :
-            removeTorqueFromAxis(m, 0)
-            removeTorqueFromAxis(m, 1)
-            removeTorqueFromAxis(m, 2)
+            removeTorqueFromAxis(m, m.getNumAxes())
         if self.torquemode == 1 :
           # Apply forcing, limiting or restoring torques
           if m.getMode() == ode.AMotorEuler :
             if ( m.getBody(1).solid.wire ) :
-              # Joint selected - Apply forcing and limiting torques 
+              # Joint selected - Apply forcing/limiting torques
               self.applyForcingTorque(t, tstep, m)
-            elif self.frame.figure.lastStateJointManip() :
-              # Was manipulating a joint but not now
-              if m.joint == self.manip_joint :
-                # This was the joint being manipulated - Remove forcing torque
-                if not self.maintainjr :
-                  removeTorqueFromAxis(m, self.torqueaxis)
+            elif self.frame.figure.currStateJointManip() :
+              # Manipulating joints, but joint not currently selected
+              if not self.maintainjr :
+                # Not maintaining manipulated rotation - Remove all
+                # forcing/limiting torques
+                removeTorqueFromAxis(m, m.getNumAxes())
               if self.rotzeroerr :
                 # Joint not selected - Apply zero error restoring torques
                 self.applyRestoringTorque(t, tstep, m)
