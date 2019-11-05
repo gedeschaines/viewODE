@@ -35,6 +35,7 @@ import time
 
 try:
   import OpenGL
+  import OpenGL.GLU
   OpenGL.USE_FREEGLUT = False
   from OpenGL.GL import *
   from OpenGL.GLU import *
