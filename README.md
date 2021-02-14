@@ -32,7 +32,7 @@ The **viewODE** program presents an interactive display for three dimensional (3
 * Pressing the 'Z' key or clicking the right mouse button will initiate the simulation by displaying a humanoid figure standing on the ground plane and a solid sphere (target) positioned in front of the figure as shown [here](./docs/begin_image.png). Mouse motion while the middle button is pressed will rotate the view about the view space X and Y axes. Apparent rotation of the ground plane does not affect dynamics since gravitational force always remains in the -Y direction.
 * The figure is initially in a standing state and will actively attempt to remain standing by adjusting torques on the ankle, knee, hip, waist and neck joint motors. While the simulation is running, key presses described in [./docs/InputOptions.txt](./docs/InputOptions.txt) can change the following.
     * arm and leg bone shape (box or rod)
-    * joint type (hinge or ball)
+    * joint type (universal or ball)
     * action mode (standing, suspended, resting, striding, reaching, kicking or walking)
     * joint damping mode (none, rotational or feedback torque)
     * manipulated joint forcing torque modes (non-forced axis limiting and maintain joint rotation)
@@ -46,6 +46,13 @@ The **viewODE** program presents an interactive display for three dimensional (3
 * To collect debug print data, redirect shell output to a text file when invoking **viewODE** such as: 'python viewODE.py 1>output.txt 2>&1'. Specific joint data records can be extracted from the output file and written to another text file using a utility such as **grep**, and the extracted joint data records file can then be processed with [./util/txt2dat.py](./util/txt2dat.py) to produce a data file suitable for input to the **xgraph** program.
 * The simulation can be paused/resumed by pressing the 'Z' key or by pressing/holding/releasing the right mouse button.
 * To terminate the program, press the 'esc' key or close the **viewODE** window.
+
+### Caveats ###
+
+1. The initial figure frame configuration utilizing universal joints apparently experiences joint dynamics which result in the robotic figure being unable to stand in a fixed position. Either activate joint rotational damping with 'D' keypress or select frame ball joints with 'B' keypress, then reset figure's stance with 'A' keypress.
+2. When executing viewODE.py with Python 3, pressing the 'ESC' key to terminate processing may result in a segmentation fault. If so, terminate processing by closing the viewODE window instead of pressing the ESC key.
+3. Since viewODE evolved over the years from Matt Heinzen's ragdoll-pyode-tutorial it has become a mixture of procedural and object-oriented programming structures; consequently embodying ill-advised coding constructs such as global variables ond global import statements.
+4. Experimentation with various action and control algorithms to work within capabilities and limitations of ODE has resulted in some non-functional and erroneous code; just ignore it.
 
 ### Attributions ###
 
