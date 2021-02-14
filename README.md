@@ -29,7 +29,7 @@ The **viewODE** program was originally developed with Python 2.5.2, ODE 0.7 and 
 The **viewODE** program presents an interactive display for three dimensional (3D) rendering of a dynamically active humanoid robotic figure comprised of rigid body solids connected with motor actuated joints. The view point and robotic figure can be manipulated using the keyboard and mouse.
 
 * Entering 'python viewODE.py' on a command shell line when in the root directory will open a **viewODE** window in which will be displayed a ground plane grid with the world reference coordinate system frame +X, +Y and +Z axes positioned at the world space origin as shown [here](./docs/start_image.png). Program status messages and debug output are printed to the command shell unless otherwise redirected.
-* Pressing the 'Z' key or clicking the right mouse button will initiate the simulation by displaying a humanoid figure standing on the ground plane and a solid sphere (target) positioned in front of the figure as shown [here](./docs/begin_image.png). Mouse motion while the middle button is pressed will rotate the view about the view space X and Y axes. Apparent rotation of the ground plane does not affect dynamics since gravitational force always remains in the -Y direction.
+* Pressing the 'Z' key or clicking the right mouse button will initiate the simulation by displaying a humanoid figure standing on the ground plane and a solid sphere (target) positioned in front of the figure as shown [here](./docs/begin_image.png). Mouse motion while the middle button is pressed will rotate the view about the view space X and Y axes. Apparent rotation of the ground plane does not affect dynamics since gravitational force always remains in the world -Y direction.
 * The figure is initially in a standing state and will actively attempt to remain standing by adjusting torques on the ankle, knee, hip, waist and neck joint motors. While the simulation is running, key presses described in [./docs/InputOptions.txt](./docs/InputOptions.txt) can change the following.
     * arm and leg bone shape (box or rod)
     * joint type (universal or ball)
@@ -49,9 +49,9 @@ The **viewODE** program presents an interactive display for three dimensional (3
 
 ### Caveats ###
 
-1. The initial figure frame configuration utilizing universal joints apparently experiences joint dynamics which result in the robotic figure being unable to stand in a fixed position. Either activate joint rotational damping with 'D' keypress or select frame ball joints with 'B' keypress, then reset figure's stance with 'A' keypress.
-2. When executing viewODE.py with Python 3, pressing the 'ESC' key to terminate processing may result in a segmentation fault. If so, terminate processing by closing the viewODE window instead of pressing the ESC key.
-3. Since viewODE evolved over the years from Matt Heinzen's ragdoll-pyode-tutorial it has become a mixture of procedural and object-oriented programming structures; consequently embodying ill-advised coding constructs such as global variables and global import statements.
+1. The initial figure frame configuration utilizing universal joints apparently experiences transient joint dynamics which result in the robotic figure being unable to stand in a fixed position. Either activate joint rotational damping with 'D' keypress or select frame ball joints with 'B' keypress, then reset figure's stance with 'A' keypress.
+2. When executing **viewODE.py** with Python 3, pressing the 'ESC' key to terminate processing may result in a segmentation fault. If so, terminate processing by closing the **viewODE** window instead of pressing the 'ESC' key.
+3. Since **viewODE** evolved over the years from Matt Heinzen's ragdoll-pyode-tutorial it has become a mixture of procedural and object-oriented programming structures; consequently embodying ill-advised coding constructs such as global variables and global import statements.
 4. Experimentation with various action and control algorithms to work within capabilities and limitations of ODE has resulted in some non-functional and erroneous code; just ignore it.
 
 ### Attributions ###
