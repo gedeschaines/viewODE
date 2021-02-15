@@ -49,7 +49,7 @@ The **viewODE** program presents an interactive display for three dimensional (3
 
 ### Caveats ###
 
-1. The initial figure frame configuration utilizing universal joints apparently experiences transient joint dynamics which result in the robotic figure being unable to stand in a fixed position. Either activate joint rotational damping with 'D' keypress or select frame ball joints with 'B' keypress, then reset figure's stance with 'A' keypress.
+1. The initial figure frame configuration utilizing universal joints apparently experiences transient contact forces and joint dynamics which result in the robotic figure being unable to stand in a fixed position. Either activate joint rotational damping with 'D' keypress or select frame ball joints with 'B' keypress, then reset figure's stance with 'A' keypress. Additionally, a double precision ODE library and Python ODE package may be necessary for dynamics engine stability. Both may be built from source maintained at [ODE DEVs ODE repository](https://bitbucket.org/odedevs/ode/src/master/).
 2. When executing **viewODE.py** with Python 3, pressing the 'ESC' key to terminate processing may result in a segmentation fault. If so, terminate processing by closing the **viewODE** window instead of pressing the 'ESC' key.
 3. Since **viewODE** evolved over the years from Matt Heinzen's ragdoll-pyode-tutorial it has become a mixture of procedural and object-oriented programming structures; consequently embodying ill-advised coding constructs such as global variables and global import statements.
 4. Experimentation with various action and control algorithms to work within capabilities and limitations of ODE has resulted in some non-functional and erroneous code; just ignore it.
