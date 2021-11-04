@@ -432,7 +432,9 @@ def _idlefunc():
     
     # State 0: Create ODE figure and target 
     if state == 0 :
-      figure.createFrame(0.0, 0.0, -2.0)
+      # Very small y offset added to mitigate dynamic perturbations due
+      # to collision contact between bottom of feet and ground plane.
+      figure.createFrame(0.0, 0.001, -2.0)
       ##_keyfunc('\x20', x, y)
       (tgtpos, target) = create_target_object( world, \
                                                space, \
