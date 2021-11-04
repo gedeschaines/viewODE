@@ -12,7 +12,7 @@
 #   $ W
 #   $ Esc
 #   $ cd zout
-#   $ ../utils/extract_stride_action_data.sh
+#   $ ../util/extract_stride_action_data.sh
 #   $ gnuplot -p right_leg_gnuplot.dat
 #   $ gnuplot -p left_leg_gnuplot.dat
 
