@@ -961,31 +961,39 @@ class Figure:
              (True not in [isnan(T1[i]) for i in range(len(T1))]) and \
              (True not in [isnan(F2[i]) for i in range(len(F2))]) and \
              (True not in [isnan(T2[i]) for i in range(len(T2))]) :
-            """
-            f1 = vecMag(F1)
-            t1 = vecMag(T1)
-            f2 = vecMag(F2)
-            t2 = vecMag(T2)
-            m1 = b1.solid.mass
-            m2 = b2.solid.mass
-            print("%s : " % name)
-            print("%s : %8.2f %8.3f %9.3f %9.3f" % (b1.solid.label,m1,r1,f1,t1) )
-            print("  F1 = %9.3f %9.3f %9.3f  T1 = %9.3f %9.3f %9.3f" % \
-                  (F1[0],F1[1],F1[2],T1[0],T1[1],T1[2]) )
-            print("  R1xF1 = %9.3f %9.3f %9.3f " % vecCrossP(R1,F1) )
-            print("%s : %8.2f %8.3f %9.3f %9.3f" % (b2.solid.label,m2,r2,f2,t2) )
-            print("  F2 = %9.3f %9.3f %9.3f  T2 = %9.3f %9.3f %9.3f" % \
-                  (F2[0],F2[1],F2[2],T2[0],T2[1],T2[2]) )
-            print("  R2xF2 = %9.3f %9.3f %9.3f " % vecCrossP(R2,F2) )
-            """
-            sumMx = sumMx + R1[1]*F1[2] - R1[2]*F1[1] + T1[0]
-            sumMz = sumMz + R1[0]*F1[1] - R1[1]*F1[0] + T1[2]
-            sumFy = sumFy + F1[1]
-            """
-            sumMx = sumMx + R2[1]*F2[2] - R2[2]*F2[1] + T2[0]
-            sumMz = sumMz + R2[0]*F2[1] - R2[1]*F2[0] + T2[2]
-            sumFy = sumFy + F2[1]
-            """
+            f1sq = vecMagSq(F1)
+            t1sq = vecMagSq(T1)
+            f2sq = vecMagSq(F2)
+            t2sq = vecMagSq(T2)
+            if ((not isnan(f1sq)) and (f1sq >= 0.0)) and \
+               ((not isnan(t1sq)) and (t1sq >= 0.0)) and \
+               ((not isnan(f2sq)) and (f2sq >= 0.0)) and \
+               ((not isnan(t2sq)) and (t2sq >= 0.0)) :
+              """
+              f1 = vecMag(F1)
+              t1 = vecMag(T1)
+              f2 = vecMag(F2)
+              t2 = vecMag(T2)
+              m1 = b1.solid.mass
+              m2 = b2.solid.mass
+              print("%s : " % name)
+              print("%s : %8.2f %8.3f %9.3f %9.3f" % (b1.solid.label,m1,r1,f1,t1) )
+              print("  F1 = %9.3f %9.3f %9.3f  T1 = %9.3f %9.3f %9.3f" % \
+                    (F1[0],F1[1],F1[2],T1[0],T1[1],T1[2]) )
+              print("  R1xF1 = %9.3f %9.3f %9.3f " % vecCrossP(R1,F1) )
+              print("%s : %8.2f %8.3f %9.3f %9.3f" % (b2.solid.label,m2,r2,f2,t2) )
+              print("  F2 = %9.3f %9.3f %9.3f  T2 = %9.3f %9.3f %9.3f" % \
+                    (F2[0],F2[1],F2[2],T2[0],T2[1],T2[2]) )
+              print("  R2xF2 = %9.3f %9.3f %9.3f " % vecCrossP(R2,F2) )
+              """
+              sumMx = sumMx + R1[1]*F1[2] - R1[2]*F1[1] + T1[0]
+              sumMz = sumMz + R1[0]*F1[1] - R1[1]*F1[0] + T1[2]
+              sumFy = sumFy + F1[1]
+              """
+              sumMx = sumMx + R2[1]*F2[2] - R2[2]*F2[1] + T2[0]
+              sumMz = sumMz + R2[0]*F2[1] - R2[1]*F2[0] + T2[2]
+              sumFy = sumFy + F2[1]
+              """
           
     if ( sumFy == 0.0 ) :
       (x, y, z) = self.calcCenterOfMass()
