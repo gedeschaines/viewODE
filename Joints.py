@@ -15,8 +15,8 @@
 #   See file DISCLAIMER-GaryDeschaines
 #   See file DISCLAIMER-MatHeinzen
 
-from sys    import exit
-from math   import isnan
+from sys  import exit
+#from math import isinf, isnan  # imported within vecMath module
 
 #
 # Import ODE module for joint and motor models.
@@ -370,8 +370,8 @@ def applyBallJointDamping(show, t, p, j, tfb, fb):
            (True not in [isnan(fb[3][i]) for i in range(len(fb[3]))]) :
           fb1sq = vecMagSq(fb[1])
           fb3sq = vecMagSq(fb[3])
-          if ((not isnan(fb1sq)) and (fb1sq >= 0.0)) and \
-             ((not isnan(fb3sq)) and (fb3sq >= 0.0)) :
+          if ((not isinf(fb1sq)) and (fb1sq >= 0.0)) and \
+             ((not isinf(fb3sq)) and (fb3sq >= 0.0)) :
             applyBallJointDampingTorque(show, t, p, j, fb)
     else :
       (ar0, ar1, ar2) = getBallJointAngularRates(j)
@@ -448,8 +448,8 @@ def applyUniversalJointDamping(show, t, p, j, tfb, fb):
          (True not in [isnan(fb[3][i]) for i in range(len(fb[3]))]) :
         fb1sq = vecMagSq(fb[1])
         fb3sq = vecMagSq(fb[3])
-        if ((not isnan(fb1sq)) and (fb1sq >= 0.0)) and \
-           ((not isnan(fb3sq)) and (fb3sq >= 0.0)) :
+        if ((not isinf(fb1sq)) and (fb1sq >= 0.0)) and \
+           ((not isinf(fb3sq)) and (fb3sq >= 0.0)) :
           applyUniversalJointDampingTorque(show, t, p, j, fb)
   else :
     Td1   = -j.specs['Dratio'][0]*j.getAngle1Rate()
@@ -506,8 +506,8 @@ def applyHingeJointDamping(show, t, p, j, tfb, fb):
          (True not in [isnan(fb[3][i]) for i in range(len(fb[3]))]) :
         fb1sq = vecMagSq(fb[1])
         fb3sq = vecMagSq(fb[3])
-        if ((not isnan(fb1sq)) and (fb1sq >= 0.0)) and \
-           ((not isnan(fb3sq)) and (fb3sq >= 0.0)) :
+        if ((not isinf(fb1sq)) and (fb1sq >= 0.0)) and \
+           ((not isinf(fb3sq)) and (fb3sq >= 0.0)) :
           applyHingeJointDampingTorque(show, t, p, j, fb)
   else :
     Td   = -j.specs['Dratio'][0]*j.getAngleRate()

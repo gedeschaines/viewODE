@@ -15,7 +15,7 @@
 #   See the file DISCLAIMER-GaryDeschaines
 #   See the file DISCLAIMER-MatHeinzen
 
-from math import pi, sqrt, acos, atan2
+from math import isinf, isnan, pi, sqrt, acos, atan2
 
 # Math Conversion Factors and Constants
 
@@ -41,17 +41,26 @@ def vecSub(A,B):
   return (A[0]-B[0], A[1]-B[1], A[2]-B[2])
   
 def vecMagSq(V) :
-  return (V[0]**2 + V[1]**2 + V[2]**2)
+  if True not in [isnan(V[i]) for i in range(len(V))]:
+    try:
+      magsq = V[0]**2 + V[1]**2 + V[2]**2
+    except OverflowError:
+      magsq = INFINITY
+  else:
+    magsq = INFINITY
+  return magsq
   
 def vecMag(V):
   magsq = vecMagSq(V)
-  if magsq > 0.0 : return sqrt(magsq)
-  else           : return 0.0
+  if isinf(magsq) : return INFINITY
+  if magsq > 0.0  : return sqrt(magsq)
+  else            : return 0.0
   
 def unitVec(V):
   mag = vecMag(V)
-  if mag > 0.0 : return vecMulS(V,1.0/mag)
-  else         : return (0.0, 0.0, 0.0)
+  if isinf(mag) : return (0.0, 0.0, 0.0)
+  if mag > 0.0  : return vecMulS(V,1.0/mag)
+  else          : return (0.0, 0.0, 0.0)
 
 def vecDotP(A,B):
   return (A[0]*B[0] + A[1]*B[1] + A[2]*B[2])

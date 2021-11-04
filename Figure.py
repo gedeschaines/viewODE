@@ -16,7 +16,7 @@
 #   See the file DISCLAIMER-MatHeinzen
 
 from sys import exit
-from math import sqrt, isnan
+#from math import isinf, isnan, sqrt  # imported within vecMath module
 
 #
 # Import ODE module for world, space, body and joint models.
@@ -368,7 +368,7 @@ class Figure:
       { 'Axes' : { 'C-0' : {'mode' : 1, 'axis' : ( 1.0, 0.0, 0.0)},
                    'C-1' : {'mode' : 2, 'axis' : ( 0.0, 0.0, 1.0)},
                    'C-2' : {'mode' : 2, 'axis' : ( 0.0, 1.0, 0.0)},
-                 },\
+                 },
         'LoStop' : [-10.0*RPD, -30.0*RPD, -60.0*RPD],
         'HiStop' : [ 45.0*RPD,  30.0*RPD,  60.0*RPD],
         'Dratio' : [    0.1,    0.3,    0.1],
@@ -379,7 +379,7 @@ class Figure:
       { 'Axes' : { 'C-0' : {'mode' : 1, 'axis' : ( 1.0, 0.0, 0.0)},
                    'C-1' : {'mode' : 2, 'axis' : ( 0.0, 0.0, 1.0)},
                    'C-2' : {'mode' : 2, 'axis' : ( 0.0, 1.0, 0.0)},
-                 },\
+                 },
         'LoStop' : [-45.0*RPD, -20.0*RPD, -60.0*RPD],
         'HiStop' : [ 45.0*RPD,  20.0*RPD,  60.0*RPD],
         'Dratio' : [    0.5,    0.5,    0.5],
@@ -721,7 +721,7 @@ class Figure:
         else :
           self.setAnimationState(self.RESTING)
       elif self.state == self.ACTION :
-        if not ( self.actions.isWalking() or  \
+        if not ( self.actions.isWalking() or
                  self.actions.isReaching()    ) :
           # Figure was walking or reaching - 
           # transition to standup state
@@ -961,8 +961,8 @@ class Figure:
              (True not in [isnan(T1[i]) for i in range(len(T1))]) :
             f1sq = vecMagSq(F1)
             t1sq = vecMagSq(T1)
-            if ((not isnan(f1sq)) and (f1sq >= 0.0)) and \
-               ((not isnan(t1sq)) and (t1sq >= 0.0)) :
+            if ((not isinf(f1sq)) and (f1sq >= 0.0)) and \
+               ((not isinf(t1sq)) and (t1sq >= 0.0)) :
               """
               f1 = vecMag(F1)
               t1 = vecMag(T1)
