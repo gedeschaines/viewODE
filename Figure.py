@@ -958,17 +958,11 @@ class Figure:
           F2 = fb[2]
           T2 = fb[3]
           if (True not in [isnan(F1[i]) for i in range(len(F1))]) and \
-             (True not in [isnan(T1[i]) for i in range(len(T1))]) and \
-             (True not in [isnan(F2[i]) for i in range(len(F2))]) and \
-             (True not in [isnan(T2[i]) for i in range(len(T2))]) :
+             (True not in [isnan(T1[i]) for i in range(len(T1))]) :
             f1sq = vecMagSq(F1)
             t1sq = vecMagSq(T1)
-            f2sq = vecMagSq(F2)
-            t2sq = vecMagSq(T2)
             if ((not isnan(f1sq)) and (f1sq >= 0.0)) and \
-               ((not isnan(t1sq)) and (t1sq >= 0.0)) and \
-               ((not isnan(f2sq)) and (f2sq >= 0.0)) and \
-               ((not isnan(t2sq)) and (t2sq >= 0.0)) :
+               ((not isnan(t1sq)) and (t1sq >= 0.0)) :
               """
               f1 = vecMag(F1)
               t1 = vecMag(T1)
@@ -1003,8 +997,7 @@ class Figure:
       z = sumMx/sumFy
      
     #print("ZMP = %f %f %f" % (x,y,z) )
-    
-    return vecAdd((x, 0.0, z),self.origin)
+    return (x, 0.0, z)
     
   def setZMP(self,zmp):
     

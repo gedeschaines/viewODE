@@ -471,7 +471,7 @@ def _idlefunc():
       
       # Simulation step
       world.step(tstep)
-      #figure.calcZMP()
+      figure.setZMP(figure.calcZMP())
 
       # Remove all contact joints
       contactgroup.empty()
