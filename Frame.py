@@ -43,7 +43,7 @@ except:
   print("Error: Motors not installed properly !!")
   
 class Frame:
-    
+
   def __init__(self, figure):
     """
     A viewODE Frame class constructor to instantiate a humanoid robotic
@@ -215,7 +215,7 @@ class Frame:
                       figure.pelvis_density,
                       figure.pelvis_xdim*sfac,
                       figure.pelvis_ydim*sfac,
-                      figure.pelvis_zdim*sfac  )
+                      figure.pelvis_zdim*sfac )
     
     frame.solids.append(solid)
     
@@ -280,7 +280,7 @@ class Frame:
                        figure.torso_density,
                        figure.torso_xdim*sfac,
                        figure.torso_ydim*sfac,
-                       figure.torso_zdim*sfac  )
+                       figure.torso_zdim*sfac )
     
     frame.solids.append(solid)
        
@@ -340,7 +340,7 @@ class Frame:
                        figure.joint_density,
                        figure.neck_radius*sfac,
                        (figure.neck_radius/2.0)*sfac,
-                       figure.neck_height*sfac        )
+                       figure.neck_height*sfac )
                        
     frame.solids.append(solid)
         
@@ -429,7 +429,7 @@ class Frame:
                       figure.limb_density,
                       figure.toes_xdim*sfac,
                       figure.toes_ydim*sfac,
-                      figure.toes_zdim*sfac    )
+                      figure.toes_zdim*sfac )
                       
     frame.solids.append(solid)
     
@@ -449,7 +449,7 @@ class Frame:
     solid = solidBall( world, space,
                        solidLabel(side,"ball"),
                        figure.joint_density,
-                       figure.ball_radius*sfac  )
+                       figure.ball_radius*sfac )
                         
     frame.solids.append(solid)
     
@@ -473,7 +473,7 @@ class Frame:
                       figure.limb_density,
                       figure.foot_xdim*sfac,
                       figure.foot_ydim*sfac,
-                      figure.foot_zdim*sfac    )
+                      figure.foot_zdim*sfac )
                       
     frame.solids.append(solid)
     
@@ -537,7 +537,7 @@ class Frame:
                         figure.limb_density,
                         figure.shin_xdim*sfac,
                         figure.shin_ydim*sfac,
-                        figure.shin_zdim*sfac    )
+                        figure.shin_zdim*sfac )
                          
     frame.solids.append(solid)  
         
@@ -570,7 +570,7 @@ class Frame:
     solid  = solidBall( world, space,
                         solidLabel(side,"knee"),
                         figure.joint_density,
-                        figure.knee_radius*sfac  )
+                        figure.knee_radius*sfac )
                         
     frame.solids.append(solid)
     
@@ -594,14 +594,14 @@ class Frame:
                         solidLabel(side,"thigh"),
                         figure.limb_density,
                         figure.thigh_radius*sfac,
-                        figure.thigh_length*sfac  )
+                        figure.thigh_length*sfac )
     else :
       solid = solidBox( world, space,
                         solidLabel(side,"thigh"),
                         figure.limb_density,
                         figure.thigh_xdim*sfac,
                         figure.thigh_ydim*sfac,
-                        figure.thigh_zdim*sfac    )
+                        figure.thigh_zdim*sfac )
       
     frame.solids.append(solid)
     
@@ -631,7 +631,7 @@ class Frame:
     solid  = solidBall( world, space,
                         solidLabel(side,"hip"),
                         figure.joint_density,
-                        figure.hip_radius*sfac  )
+                        figure.hip_radius*sfac )
                         
     frame.solids.append(solid)
     
@@ -682,7 +682,7 @@ class Frame:
     solid = solidBall( world, space,
                        solidLabel(side,"shoulder"),
                        figure.joint_density,
-                       figure.shoulder_radius*sfac  )
+                       figure.shoulder_radius*sfac )
                                  
     frame.solids.append(solid)
     
@@ -708,14 +708,14 @@ class Frame:
                         solidLabel(side,"upper_arm"),
                         figure.limb_density,
                         figure.upper_arm_radius*sfac,
-                        figure.upper_arm_length*sfac  )
+                        figure.upper_arm_length*sfac )
     else :
       solid = solidBox( world, space,
                         solidLabel(side,"upper_arm"),
                         figure.limb_density,
                         figure.upper_arm_xdim*sfac,
                         figure.upper_arm_ydim*sfac,
-                        figure.upper_arm_zdim*sfac    )
+                        figure.upper_arm_zdim*sfac )
                         
     frame.solids.append(solid)
     
@@ -737,7 +737,7 @@ class Frame:
     solid  = solidBall( world, space,
                         solidLabel(side,"elbow"),
                         figure.joint_density,
-                        figure.elbow_radius*sfac  )
+                        figure.elbow_radius*sfac )
                         
     frame.solids.append(solid)            
                         
@@ -770,14 +770,14 @@ class Frame:
                         solidLabel(side,"fore_arm"),
                         figure.limb_density,
                         figure.fore_arm_radius*sfac,
-                        figure.fore_arm_length*sfac  )
+                        figure.fore_arm_length*sfac )
     else :
       solid = solidBox( world, space,
                         solidLabel(side,"fore_arm"),
                         figure.limb_density,
                         figure.fore_arm_xdim*sfac,
                         figure.fore_arm_ydim*sfac,
-                        figure.fore_arm_zdim*sfac    )
+                        figure.fore_arm_zdim*sfac )
                            
     frame.solids.append(solid)
                             
@@ -799,7 +799,7 @@ class Frame:
     solid  = solidBall( world, space,
                         solidLabel(side,"wrist"),
                         figure.joint_density,
-                        figure.wrist_radius*sfac  )
+                        figure.wrist_radius*sfac )
                         
     frame.solids.append(solid)
     
@@ -832,7 +832,7 @@ class Frame:
                        figure.limb_density,
                        figure.hand_xdim*sfac,
                        figure.hand_ydim*sfac,
-                       figure.hand_zdim*sfac    )
+                       figure.hand_zdim*sfac )
                        
     frame.solids.append(solid)
     
