@@ -368,7 +368,7 @@ def applyBallJointDamping(show, t, p, j, tfb, fb):
       if fb :
         if (True not in [isnan(fb[1][i]) for i in range(len(fb[1]))]) and \
            (True not in [isnan(fb[3][i]) for i in range(len(fb[3]))]) :
-          if (vecMagSq(fb[1]) > 0.0) and (vecMagSq(fb[3]) > 0.0) :
+          if (vecMagSq(fb[1]) >= 0.0) and (vecMagSq(fb[3]) >= 0.0) :
             applyBallJointDampingTorque(show, t, p, j, fb)
     else :
       (ar0, ar1, ar2) = getBallJointAngularRates(j)
@@ -443,7 +443,7 @@ def applyUniversalJointDamping(show, t, p, j, tfb, fb):
     if fb :
       if (True not in [isnan(fb[1][i]) for i in range(len(fb[1]))]) and \
          (True not in [isnan(fb[3][i]) for i in range(len(fb[3]))]):
-        if (vecMagSq(fb[1]) > 0.0) and (vecMagSq(fb[3]) > 0.0) :
+        if (vecMagSq(fb[1]) >= 0.0) and (vecMagSq(fb[3]) >= 0.0) :
           applyUniversalJointDampingTorque(show, t, p, j, fb)
   else :
     Td1   = -j.specs['Dratio'][0]*j.getAngle1Rate()
@@ -498,7 +498,7 @@ def applyHingeJointDamping(show, t, p, j, tfb, fb):
     if fb :
       if (True not in [isnan(fb[1][i]) for i in range(len(fb[1]))]) and \
          (True not in [isnan(fb[3][i]) for i in range(len(fb[3]))]):
-        if (vecMagSq(fb[1]) > 0.0) and (vecMagSq(fb[3]) > 0.0) :
+        if (vecMagSq(fb[1]) >= 0.0) and (vecMagSq(fb[3]) >= 0.0) :
           applyHingeJointDampingTorque(show, t, p, j, fb)
   else :
     Td   = -j.specs['Dratio'][0]*j.getAngleRate()
