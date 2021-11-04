@@ -16,6 +16,7 @@
 #   See file DISCLAIMER-MatHeinzen
 
 from sys    import exit
+from math   import isnan
 
 #
 # Import ODE module for joint and motor models.
@@ -365,7 +366,10 @@ def applyBallJointDamping(show, t, p, j, tfb, fb):
     if tfb :
       if not fb : fb = j.getFeedback()
       if fb :
-        applyBallJointDampingTorque(show, t, p, j, fb)
+        if (True not in [isnan(fb[1][i]) for i in range(len(fb[1]))]) and \
+           (True not in [isnan(fb[3][i]) for i in range(len(fb[3]))]) :
+          if (vecMagSq(fb[1]) > 0.0) and (vecMagSq(fb[3]) > 0.0) :
+            applyBallJointDampingTorque(show, t, p, j, fb)
     else :
       (ar0, ar1, ar2) = getBallJointAngularRates(j)
       Td0   = -j.specs['Dratio'][0]*ar0
@@ -392,7 +396,7 @@ def applyUniversalJointDampingTorque(show, t, p, j, fb):
   # feedback array in joint body 2 coordinates
   T1body = j.getBody(1).vectorFromWorld( fb[1] )
   T2body = j.getBody(1).vectorFromWorld( fb[3] )
-    
+
   # Get the body torque components along the joint's
   # hinge axes 
   T11d    = vecDotP(T1body, H1axis)
@@ -437,7 +441,10 @@ def applyUniversalJointDamping(show, t, p, j, tfb, fb):
   if tfb :
     if not fb : fb = j.getFeedback()
     if fb :
-      applyUniversalJointDampingTorque(show, t, p, j, fb)
+      if (True not in [isnan(fb[1][i]) for i in range(len(fb[1]))]) and \
+         (True not in [isnan(fb[3][i]) for i in range(len(fb[3]))]):
+        if (vecMagSq(fb[1]) > 0.0) and (vecMagSq(fb[3]) > 0.0) :
+          applyUniversalJointDampingTorque(show, t, p, j, fb)
   else :
     Td1   = -j.specs['Dratio'][0]*j.getAngle1Rate()
     Td2   = -j.specs['Dratio'][2]*j.getAngle2Rate()
@@ -489,7 +496,10 @@ def applyHingeJointDamping(show, t, p, j, tfb, fb):
   if tfb :
     if not fb : fb = j.getFeedback()
     if fb :
-      applyHingeJointDampingTorque(show, t, p, j, fb)
+      if (True not in [isnan(fb[1][i]) for i in range(len(fb[1]))]) and \
+         (True not in [isnan(fb[3][i]) for i in range(len(fb[3]))]):
+        if (vecMagSq(fb[1]) > 0.0) and (vecMagSq(fb[3]) > 0.0) :
+          applyHingeJointDampingTorque(show, t, p, j, fb)
   else :
     Td   = -j.specs['Dratio'][0]*j.getAngleRate()
     FMax =  j.specs['FMax'][0]

@@ -16,7 +16,7 @@
 #   See the file DISCLAIMER-MatHeinzen
 
 from sys import exit
-from math import sqrt
+from math import sqrt, isnan
 
 #
 # Import ODE module for world, space, body and joint models.
@@ -69,18 +69,18 @@ ANIMATION_STATES = ( "Initialize",
                      "Standup" )
 
 class Figure:
-    
+
   def __init__(self, world, space, floor, sfac):
     """
-    A viewODE Figure class contructor to instantiates a humanoid robotic
+    A viewODE Figure class constructor to instantiate a humanoid robotic
     figure object.
 
     @param world: The simulated dynamic world.
     @type  world: ODE World object
     @param space: The dynamic world space .
     @type  space: ODE Space object
-    @param space: The dynamic world space ground plane.
-    @type  space: ODE GeomPlane object
+    @param floor: The dynamic world space ground plane.
+    @type  floor: ODE GeomPlane object
     @param sfac: The figure size scaling factor.
     @param sfac: float
     """
@@ -954,34 +954,38 @@ class Figure:
         fb    = j.getFeedback()
         if fb :
           F1 = fb[0]
-          f1 = vecMag(F1)
           T1 = fb[1]
-          t1 = vecMag(T1)
           F2 = fb[2]
-          f2 = vecMag(F2)
           T2 = fb[3]
-          t2 = vecMag(T2)
-          m1 = b1.solid.mass
-          m2 = b2.solid.mass
-          """
-          print("%s : " % name)
-          print("%s : %8.2f %8.3f %9.3f %9.3f" % (b1.solid.label,m1,r1,f1,t1) )
-          print("  F1 = %9.3f %9.3f %9.3f  T1 = %9.3f %9.3f %9.3f" % \
-                 (F1[0],F1[1],F1[2],T1[0],T1[1],T1[2]) )
-          print("  R1xF1 = %9.3f %9.3f %9.3f " % vecCrossP(R1,F1) )
-          print("%s : %8.2f %8.3f %9.3f %9.3f" % (b2.solid.label,m2,r2,f2,t2) )
-          print("  F2 = %9.3f %9.3f %9.3f  T2 = %9.3f %9.3f %9.3f" % \
-                 (F2[0],F2[1],F2[2],T2[0],T2[1],T2[2]) )
-          print("  R2xF2 = %9.3f %9.3f %9.3f " % vecCrossP(R2,F2) )
-          """
-          sumMx = sumMx + R1[1]*F1[2] - R1[2]*F1[1] + T1[0]
-          sumMz = sumMz + R1[0]*F1[1] - R1[1]*F1[0] + T1[2]
-          sumFy = sumFy + F1[1]
-          """
-          sumMx = sumMx + R2[1]*F2[2] - R2[2]*F2[1] + T2[0]
-          sumMz = sumMz + R2[0]*F2[1] - R2[1]*F2[0] + T2[2]
-          sumFy = sumFy + F2[1]
-          """
+          if (True not in [isnan(F1[i]) for i in range(len(F1))]) and \
+             (True not in [isnan(T1[i]) for i in range(len(T1))]) and \
+             (True not in [isnan(F2[i]) for i in range(len(F2))]) and \
+             (True not in [isnan(T2[i]) for i in range(len(T2))]) :
+            """
+            f1 = vecMag(F1)
+            t1 = vecMag(T1)
+            f2 = vecMag(F2)
+            t2 = vecMag(T2)
+            m1 = b1.solid.mass
+            m2 = b2.solid.mass
+            print("%s : " % name)
+            print("%s : %8.2f %8.3f %9.3f %9.3f" % (b1.solid.label,m1,r1,f1,t1) )
+            print("  F1 = %9.3f %9.3f %9.3f  T1 = %9.3f %9.3f %9.3f" % \
+                  (F1[0],F1[1],F1[2],T1[0],T1[1],T1[2]) )
+            print("  R1xF1 = %9.3f %9.3f %9.3f " % vecCrossP(R1,F1) )
+            print("%s : %8.2f %8.3f %9.3f %9.3f" % (b2.solid.label,m2,r2,f2,t2) )
+            print("  F2 = %9.3f %9.3f %9.3f  T2 = %9.3f %9.3f %9.3f" % \
+                  (F2[0],F2[1],F2[2],T2[0],T2[1],T2[2]) )
+            print("  R2xF2 = %9.3f %9.3f %9.3f " % vecCrossP(R2,F2) )
+            """
+            sumMx = sumMx + R1[1]*F1[2] - R1[2]*F1[1] + T1[0]
+            sumMz = sumMz + R1[0]*F1[1] - R1[1]*F1[0] + T1[2]
+            sumFy = sumFy + F1[1]
+            """
+            sumMx = sumMx + R2[1]*F2[2] - R2[2]*F2[1] + T2[0]
+            sumMz = sumMz + R2[0]*F2[1] - R2[1]*F2[0] + T2[2]
+            sumFy = sumFy + F2[1]
+            """
           
     if ( sumFy == 0.0 ) :
       (x, y, z) = self.calcCenterOfMass()
