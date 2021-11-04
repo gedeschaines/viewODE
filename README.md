@@ -11,17 +11,20 @@ The main program file is **viewODE.py**. Other Python files are object class mod
 * The root directory contains the main program file and imported object class and static procedure module files.
 * The ./docs subdirectory contains a keyboard and mouse input options guide, design notes and howto tutorials.
 * The ./test subdirectory contains unit test driver programs and scripts.
-* The ./util subdirectory contains Python and shell scripts for converting captured JPEG image files to animated GIFs and MP4 videos, and to generate **xgraph** data files from debug print text files.
+* The ./util subdirectory contains Python and shell scripts for converting captured JPEG image files to animated GIFs and MP4 videos, and to generate **XGraph** and **gnuplot** data files from debug print text files.
 
 ### Execution Prerequisites ###
 
-The **viewODE** program was originally developed with Python 2.5.2, ODE 0.7 and PyODE 1.2.0 on a Windows XP platform, but recent development efforts have been with Python 2.7.6 and 3.4.3 on a Ubuntu 14.04 platform.
+The **viewODE** program was originally developed with Python 2.5.2, ODE 0.7 and PyODE 1.2.0 on a Windows XP platform, later development efforts had been with Python 2.7.6 and 3.4.3 on an Ubuntu 14.04 platform and recent development with Python 2.7.17 and 3.6.9 on an Ubuntu 18.04 platform.
 
 * Python 2.7.6 or 3.4.3
 * ODE 0.11.1 and PyODE 1.2.1 for Python 2.7.6
 * ODE 0.12 with Python binding for Python 2.7.6 or 3.4.3
 * PyOpenGL 3.0.2
 * Pillow 2.3.0
+* ODE 0.16.2 with Python binding for Python 2.7.17 or 3.6.9
+* PyOpenGL 3.1.0
+* Pillow 6.2.1
 * Mouse with 3 buttons (left for picking, middle for view rotation, right for start/pause)
 
 ### Execution Overview ###
