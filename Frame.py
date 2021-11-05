@@ -76,8 +76,7 @@ class Frame:
     self.solids = []
      
     self.setFeedbackOff()
-    if self.figure.control.tfbdamping == True :
-      self.feedback = True
+    self.feedback = True  # default
       
     self.jointgroup.empty()
     self.joints = []
