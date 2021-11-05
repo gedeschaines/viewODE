@@ -96,15 +96,19 @@ class Frame:
   def setConfig(self, key):
       
     set = False
-    
+
     if key == 'b' or key == 'B' :
       # Re-assemble object with ball joints
       set = True
       self.balljoints = not self.balljoints
+      if self.balljoints : print("Re-assemble frame with ball joints ON\n")
+      else               : print("Re-assemble frame with ball joints OFF\n")
     elif key == 's' or key == 'S' :
       # Toggle slimbones arm and leg body segments
       set = True
       self.slimbones = not self.slimbones
+      if self.slimbones  : print("Toggle arm and leg slimbones ON\n")
+      else               : print("Toggle arm and leg slimbones OFF\n")
 
     return set
     
