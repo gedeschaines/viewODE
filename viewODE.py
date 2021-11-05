@@ -157,9 +157,10 @@ def resetSim(mode):
     
   # Reset figure animation state
   if mode != RESET_MODE['exit'] :
-    print(" ")
-    print("**** Figure Animation Reset ****")
-    figure.resetAnimation()
+    if figure.getAnimationState() != figure.INITIALIZE:
+       print(" ")
+       print("**** Figure Animation Reset ****")
+       figure.resetAnimation()
 
   # Empty contactgroup joints
   contactgroup.empty()
