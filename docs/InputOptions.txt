@@ -9,6 +9,7 @@ Main Simulation
     J   = Toggle Control debug On/Off
     X   = Reset simulation
     Z   = Toggle simulation pause On/Off
+    /   = Toggle gravity fixed along world -Y axis On/Off
   
   Mouse Button and Motion Options:
     Left = Grab object (see Render class below.)

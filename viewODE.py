@@ -137,6 +137,7 @@ def resetSim(mode):
   global RESET_MODE, INITIAL_POS, PAUSE
   global contactgroup
   global state
+  global world
   global renderer
   global figure
   global target
@@ -144,8 +145,10 @@ def resetSim(mode):
   # Reset simulation state
   state = 0
   #PAUSE = True
-  
+
   if mode == RESET_MODE['hard'] :
+    # Reset world gravity vector
+    world.setGravity((0.0, -9.81, 0.0))
     # Reset figure configuration
     print(" ")
     print("**** Figure Configuration Reset ****")
@@ -214,17 +217,18 @@ def _keyfunc(key, x, y):
   @param y: Window y coordinate.
   @type  y: int
   """
-  global RESET_MODE, PAUSE
+  global RESET_MODE, GRAV_FIXED, PAUSE
   global renderer
   global figure
   global state
+  global world
   
   key = key.decode()
   
   if key == '\x1b' :
     exitSim(RESET_MODE['exit'])
     return
-   
+
   if figure.doKeyPress(key) :
     if figure.getAnimationState() == 0 :
       resetSim(RESET_MODE['soft'])
@@ -249,11 +253,21 @@ def _keyfunc(key, x, y):
   # Reset simulation
     resetSim(RESET_MODE['hard'])
   elif key == 'z' or key == 'Z' :
-  # Togle simulation pause state
+  # Toggle simulation pause state
     PAUSE = not PAUSE
-    if PAUSE : print("*** Simulation pause")
-    else     : print("*** Simulation resume")
-      
+    if PAUSE :
+      print("*** Simulation pause")
+    else :
+      print("*** Simulation resume")
+  elif key == '/' :
+  # Toggle fixed gravity
+    GRAV_FIXED = not GRAV_FIXED
+    if GRAV_FIXED :
+       print("*** Fixed gravity on")
+       world.setGravity((0.0, -9.81, 0.0))
+    else :
+       print("*** Fixed gravity off")
+
 def _mousefunc(b, s, mx, my):
   """
   Mouse button handler.
@@ -358,7 +372,6 @@ def near_callback(args, geom1, geom2):
   This function checks if the given geoms do collide and creates contact
   joints if they do.
 
-
   @param args: ODE world and contactgroup
   @type  args: tuple
   @param geom1: geometry of 1st body
@@ -418,7 +431,7 @@ def _idlefunc():
   This method is passed to the Render class constructor in order to be
   registered as the glutIdleFunc callback.
   """
-  global PAUSE
+  global PAUSE, GRAV_FIXED
   global renderer, frame_rate, frame_step
   global world, space, contactgroup
   global figure, target
@@ -462,7 +475,14 @@ def _idlefunc():
           grab(body, tstep)
         # Update figure animation
         figure.updateAnimation(body, target, t, tstep)
-      
+
+      # Change gravity direction based on world floor plane rotation about X-axis
+      if not GRAV_FIXED :
+        gvec  = (0.0, -9.81, 0.0)
+        radx  = -renderer.rotationX*RPD
+        gvecx = (gvec[0], gvec[1]*cos(radx) - gvec[2]*sin(radx), gvec[1]*sin(radx) + gvec[2]*cos(radx))
+        world.setGravity(gvecx)
+
       # Detect collisions and create contact joints
       figure.createCGP('R')
       figure.createCGP('L')
@@ -534,6 +554,7 @@ if __name__ == '__main__':
                     filename )
 
   # Create ODE world object
+  GRAV_FIXED = True
   world = ode.World()
   world.setGravity( (0.0,-9.81,0.0) )
   world.setERP(0.2)

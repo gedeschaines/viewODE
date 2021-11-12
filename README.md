@@ -32,7 +32,7 @@ The **viewODE** program was originally developed with Python 2.5.2, ODE 0.7 and 
 The **viewODE** program presents an interactive display for three-dimensional (3D) rendering of a dynamically active humanoid robotic figure comprised of rigid body solids connected with motor actuated joints. The view point and robotic figure can be manipulated using the keyboard and mouse.
 
 * Entering 'python viewODE.py' on a command shell line when in the root directory will open a **viewODE** window in which will be displayed a ground plane grid with the world reference coordinate system frame +X, +Y and +Z axes positioned at the world space origin as shown [here](./docs/start_image.png). Program status messages and debug output are printed to the command shell unless otherwise redirected.
-* Pressing the 'Z' key or clicking the right mouse button will initiate the simulation by displaying a humanoid figure standing on the ground plane and a solid sphere (target) positioned in front of the figure as shown [here](./docs/begin_image.png). Mouse motion while the middle button is pressed will rotate the view about the view space X and Y axes. Apparent rotation of the ground plane does not affect dynamics since gravitational force always remains in the world -Y direction.
+* Pressing the 'Z' key or clicking the right mouse button will initiate the simulation by displaying a humanoid figure standing on the ground plane and a solid sphere (target) positioned in front of the figure as shown [here](./docs/begin_image.png). Mouse motion while the middle button is pressed will rotate the view about the view space X and Y axes. Apparent rotation of the ground plane will not affect dynamics if gravitational force remains fixed along the world -Y axis.
 * The figure is initially in a standing state and will actively attempt to remain standing by adjusting torques on the ankle, knee, hip, waist and neck joint motors. While the simulation is running, key presses described in [./docs/InputOptions.txt](./docs/InputOptions.txt) can change the following.
     * arm and leg bone shape (box or rod)
     * joint type (universal or ball)
@@ -40,6 +40,7 @@ The **viewODE** program presents an interactive display for three-dimensional (3
     * joint damping mode (none, rotational or feedback torque)
     * manipulated joint forcing torque modes (non-forced axis limiting and maintain joint rotation)
     * active motor axis (none or +/- x, y or z)
+    * gravity vector fixed along world -Y axis or rotatable about world X axis to be along view space -Y axis
     * rendering mode (orthographic or perspective, selection volume rendering)
     * simulation modes (paused, reset, image capture)
     * debug output (render, actions and control)

@@ -293,7 +293,37 @@ class Render:
     glVertex3f(-0.1,-0.1, 1.0)
     glVertex3f( 0.1,-0.1, 1.0)
     glEnd()
-    
+
+  def drawGravityVector(self, gvec):
+    """
+    Draws world gravity direction vector as purple conic arrow
+    """
+    ugvec = vecDivS(gvec, 9.81)
+    rotx  = self.rotationX
+    angx  = acosVecDotP((0.0, -9.81, 0.0), gvec)*DPR
+    if angx > 0.0001:
+      # fixed world gravity is disabled; use rotx
+      angx = rotx
+
+    # arrow shaft as line
+    glColor3f(1.0, 0.0, 1.0)
+    glBegin(GL_LINES)
+    glVertex3f(0.0, 0.0, 0.0)
+    glVertex3f(ugvec[0], ugvec[1], ugvec[2])
+    glEnd()
+
+    # arrow head as cone
+    r1 = 0.05
+    r2 = 0.0
+    h  = 0.2
+    glTranslatef(ugvec[0], ugvec[1], ugvec[2])  # location of GLU cylinder base
+    glRotatef(90.0-angx, 1.0, 0.0, 0.0)         # Note: align GLU cylinder +z-axis
+                                                # with ODE gravity direction vector
+    quad = gluNewQuadric()
+    gluQuadricDrawStyle(quad, GLU_FILL)
+    gluCylinder(quad, r1, r2, h, 9, 1)
+    gluDeleteQuadric(quad)
+
   def renderFloor(self):
     """
     Draw an ODE floor plane grid.
@@ -314,6 +344,11 @@ class Render:
         glVertex3f(x + 1.0, 0.0, z      )
         glEnd()
     self.drawWorldAxes()
+    if self.figure is None :
+      self.drawGravityVector((0.0,-9.81,0.0))
+    else :
+      self.drawGravityVector(self.figure.world.getGravity())
+
     glPopMatrix()
     glEnable(GL_LIGHTING)
     
@@ -338,17 +373,17 @@ class Render:
     
   def drawFigureCoP(self, figure, foot):
     """
-    Draw figure's CoP on the floor plane as a vertical purple line.
+    Draw figure's CoP on the floor plane as a vertical dark green line.
     """   
     cop = figure.getCOP(foot)
-    glDisable(GL_LIGHTING)   # Disable lighting in order for
-    glColor3f(1.0, 0.0, 1.0) # lines to always be this color
+    glDisable(GL_LIGHTING)    # Disable lighting in order for
+    glColor3f(0.0, 0.75, 0.0) # lines to always be this color
     glPushMatrix()
     glRotatef(self.rotationY, 0.0, 1.0, 0.0)
     glRotatef(self.rotationX, 1.0, 0.0, 0.0)
     glBegin(GL_LINES)
     glVertex3f(cop[0],-0.2,cop[2])
-    glVertex3f(cop[0], 0.2,cop[2])
+    glVertex3f(cop[0], 0.8,cop[2])
     glEnd()
     glPopMatrix()
     glEnable(GL_LIGHTING)
@@ -469,7 +504,7 @@ class Render:
       glMultMatrixd(rot)
       glTranslatef(0.0, -h/2, 0.0)  # diff between ODE and GLU body origin
       glRotatef(-90.0, 1.0, 0.0, 0.0)  # Note: align GLU cylinder +z-axis 
-                                        # with the ODE world +y-axis 
+                                       # with the ODE world +y-axis
       quad = gluNewQuadric()
       if solid.wire and mode : gluQuadricDrawStyle(quad,GLU_LINE)
       else                   : gluQuadricDrawStyle(quad,GLU_FILL)
