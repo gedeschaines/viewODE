@@ -82,9 +82,10 @@ class Capture:
                                 "raw", "RGBA", 0, -1 ) # Decoder
                                 
       # Save image as a JPEG file
+      if image.mode in ("RGBA"): image = image.convert("RGB")
       scount = format_string("%04d",self.count)
       file   = "./zimg/" + self.filename + "_" + scount + ".jpg"
-      image.save(file,"JPEG")
+      image.save(file)
     
       # Increment image counter
       self.count += 1
