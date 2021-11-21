@@ -332,6 +332,10 @@ class Actions :
         a fixed location.
     """
     fig = self.figure
+
+    # Calculate gravity angle about world x-axis; same as forward slope angle
+    gvec = fig.world.getGravity()
+    angx = atan2(-gvec[2]/9.81, -gvec[1]/9.81)*DPR
     
     # Calculate figure's center of mass velocity and acceleration.
     cmpos = fig.calcCenterOfMass()
@@ -350,7 +354,6 @@ class Actions :
     
     # Calculate the zero moment point on the ground plane as
     # measured from the figure's origin.
-    
     zmpx = cgpos[0] - (cgpos[1]/9.81)*cmacc[0]
     zmpy = 0.0
     zmpz = cgpos[2] - (cgpos[1]/9.81)*cmacc[2]
@@ -413,7 +416,13 @@ class Actions :
     RATE = self.angvel_max
     if fig.control.rotdamping : KFAC = 1.8
     else                      : KFAC = 1.2
-    
+
+    # Rotate arms to counter gravity angle.
+    rs_motor = fig.r_shoulder.motor
+    ls_motor = fig.l_shoulder.motor
+    rotateAxisToAngle(rs_motor, 2, angx*RPD, TOL, RATE)
+    rotateAxisToAngle(ls_motor, 2, angx*RPD, TOL, RATE)
+
     # Rotate head to keep eyes level and straight ahead. 
     n_joint = fig.neck.joint
     n_motor = fig.neck.motor
@@ -452,9 +461,9 @@ class Actions :
       # Apply rotation to hips to counter pelvis rotation.
       rotateAxisAtRate(rh_motor, 2, -KFAC*pangvX)
       rotateAxisAtRate(lh_motor, 2, -KFAC*pangvX)
-      # Rotate ankles to -3 degree angle.
-      rotateAxisToAngle(ra_motor, 0, 1.0*RPD, TOL, RATE)
-      rotateAxisToAngle(la_motor, 0, 1.0*RPD, TOL, RATE)
+      # Rotate ankles to 1 degree angle.
+      rotateAxisToAngle(ra_motor, 0, (1.0-angx)*RPD, TOL, RATE)
+      rotateAxisToAngle(la_motor, 0, (1.0-angx)*RPD, TOL, RATE)
     elif cmdst < 0.0 :  # COM posterior to ankle joint
       # Rotate head to keep eyes level. 
       rotateAxisAtRate(n_motor, 0, -KFAC*angvX)
@@ -464,19 +473,19 @@ class Actions :
       rotateAxisAtRate(rh_motor, 2, -KFAC*pangvX)
       rotateAxisAtRate(lh_motor, 2, -KFAC*pangvX)
       # Rotate ankles to -3 degree angle.
-      rotateAxisToAngle(ra_motor, 0, -3.0*RPD, TOL, RATE)
-      rotateAxisToAngle(la_motor, 0, -3.0*RPD, TOL, RATE)
+      rotateAxisToAngle(ra_motor, 0, (-3.0-angx)*RPD, TOL, RATE)
+      rotateAxisToAngle(la_motor, 0, (-3.0-angx)*RPD, TOL, RATE)
     else :  # COM posterior to foot midpoint and anterior to ankle joint
       # Rotate head to keep eyes level. 
-      rotateAxisToZero(n_motor, 0, TOL, RATE)
+      rotateAxisToAngle(n_motor, 0, 0.0*RPD, TOL, RATE)
       # Keep waist at -3 degree angle.
-      rotateAxisToAngle(w_motor, 0, -3.0*RPD, TOL, RATE)
+      rotateAxisToAngle(w_motor, 0, (-3.0+angx)*RPD, TOL, RATE)
       # Keep hips at -3 degree angle.
       rotateAxisToAngle(rh_motor, 2, -3.0*RPD, TOL, RATE)
       rotateAxisToAngle(lh_motor, 2, -3.0*RPD, TOL, RATE)
       # Apply rotation to ankles to counter forward/backward sway.
-      rotateAxisToAngle(ra_motor, 0, -3.0*RPD, TOL, RATE)
-      rotateAxisToAngle(la_motor, 0, -3.0*RPD, TOL, RATE)
+      rotateAxisToAngle(ra_motor, 0, (-3.0-angx)*RPD, TOL, RATE)
+      rotateAxisToAngle(la_motor, 0, (-3.0-angx)*RPD, TOL, RATE)
       
     # Apply rotation to hips to counter side-to-side sway.
     rotateAxisAtRate(rh_motor, 0, -KFAC*angvZ)
