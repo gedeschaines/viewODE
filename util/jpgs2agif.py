@@ -13,7 +13,7 @@ for infile in sorted(glob.glob("img_0*.jpg")):
   imc = im.convert('L')
   sequence.append(imc)
   num += 1
-  print "Loaded and converted", infile
+  print("Loaded and converted", infile)
 
 if num < 0:
   print("No JPEG image files loaded.")
