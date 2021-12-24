@@ -5,7 +5,7 @@
 # starting in directory containing the viewODE.py file:
 #
 #   $ mkdir zout
-#   $ python viewODE.py 1>zout/stride_action_output.txt
+#   $ python3 viewODE.py 1>zout/stride_action_output.txt
 #   $ Z
 #   $ H
 #   $ Y
@@ -27,5 +27,5 @@ done
 
 for LEG in $LEG_LIST
 do
-  python2 ../util/txt2dat.py ${LEG}.txt $LEG "0"
+  python3 ../util/txt2dat.py ${LEG}.txt $LEG "0"
 done
