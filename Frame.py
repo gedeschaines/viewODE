@@ -848,3 +848,36 @@ class Frame:
     joint = attachFixedJoint(frame,side,hand,wrist)
   
     return (sx, sy, sz, shoulder)
+
+  def updateFrameSolidsPosVelAcc(self, t, tstep):
+    """
+    Update frame solids position data points and use to estimate updated
+    velocity and acceleration.
+    :param t: simulation time
+    :param tstep: simulation time step
+    :return: none
+    """
+    MIDX = ((0,1,2),(1,2,0),(2,0,1))
+    for s in self.solids:
+      cmpos = s.body.getPosition()
+      if s.knt == 0:
+        # initialize
+        s.t0 = t
+        s.cmpos[0] = cmpos
+        cmvel = (0.0, 0.0, 0.0)
+        cmacc = (0.0, 0.0, 0.0)
+      elif s.knt == 1:
+        # use 2-point difference expressions
+        s.cmpos[1] = cmpos
+        cmvel = vecDivS(vecSub(s.cmpos[1], s.cmpos[0]), tstep)
+        cmacc = vecDivS(vecSub(cmvel, s.cmvel), tstep)
+      else:
+        # use 3-point central difference expressions
+        m   = (s.knt+1) % 3
+        idx = MIDX[m][0:]
+        s.cmpos[idx[2]] = cmpos
+        cmvel = vecDivS(vecSub(s.cmpos[idx[2]],s.cmpos[idx[0]]),2*tstep)
+        cmacc = vecDivS(vecSub(vecAdd(s.cmpos[idx[2]],s.cmpos[idx[0]]),vecMulS(s.cmpos[idx[1]],2)),tstep*tstep)
+      s.knt   = s.knt + 1
+      s.cmvel = cmvel
+      s.cmacc = cmacc

@@ -925,78 +925,139 @@ class Figure:
       
     if foot == 'R' : self.cgp_r_foot = []
     else           : self.cgp_l_foot = []
-    
+
   def calcZMP(self):
-      
-    #print("=== calcZMP:")
-    
+    """
+    Calculate figure's Zero Moment Point in world space reference frame
+    coordinates.
+    :return: (x,0,z) point on world floor plane
+    References:
+        [1] Mario  Ricardo  Arbul´u  Saavedra  “Stable  locomotion  of  humanoid
+            robots based on mass concentrated model” Ph. D thesis, October 2008
+        [2] Dr. D. Kostic “Zero-moment point method for stable biped walking”
+            Eindhoven, University of Technology, DCT no.: 2009.072, July 2009
+    """
+    if self.actions.debug:
+      print("=== calcZMP:")
+
+    # Calculate the zero moment point on the ground plane as measured
+    # wrt the world space origin (eqs. 3.17 & 3.18 from ref [2]).
+
     sumMx = 0.0
     sumMz = 0.0
     sumFy = 0.0
-    
-    for j in self.frame.joints:
-      name = j.label
-      b1   = j.getBody(0)
-      b2   = j.getBody(1)
-      if not isinstance(j,ode.FixedJoint) :
-        if isinstance(j,ode.FixedJoint) :
-          j1Pos = b2.getPosition()
-          j2Pos = b2.getPosition()
-        else :
-          j1Pos = j.getAnchor()
-          j2Pos = j.getAnchor2()
-        b1Pos = b1.getPosition()
-        R1    = vecSub(j1Pos,b1Pos)
-        r1    = vecMag(R1)
-        b2Pos = b2.getPosition()
-        R2    = vecSub(j2Pos,b2Pos)
-        r2    = vecMag(R2)
-        fb    = j.getFeedback()
-        if fb :
-          F1 = fb[0]
-          T1 = fb[1]
-          F2 = fb[2]
-          T2 = fb[3]
-          if (True not in [isnan(F1[i]) for i in range(len(F1))]) and \
-             (True not in [isnan(T1[i]) for i in range(len(T1))]) :
-            f1sq = vecMagSq(F1)
-            t1sq = vecMagSq(T1)
-            if ((not isinf(f1sq)) and (f1sq >= 0.0)) and \
-               ((not isinf(t1sq)) and (t1sq >= 0.0)) :
-              """
-              f1 = vecMag(F1)
-              t1 = vecMag(T1)
-              f2 = vecMag(F2)
-              t2 = vecMag(T2)
-              m1 = b1.solid.mass
-              m2 = b2.solid.mass
-              print("%s : " % name)
-              print("%s : %8.2f %8.3f %9.3f %9.3f" % (b1.solid.label,m1,r1,f1,t1) )
-              print("  F1 = %9.3f %9.3f %9.3f  T1 = %9.3f %9.3f %9.3f" % \
-                    (F1[0],F1[1],F1[2],T1[0],T1[1],T1[2]) )
-              print("  R1xF1 = %9.3f %9.3f %9.3f " % vecCrossP(R1,F1) )
-              print("%s : %8.2f %8.3f %9.3f %9.3f" % (b2.solid.label,m2,r2,f2,t2) )
-              print("  F2 = %9.3f %9.3f %9.3f  T2 = %9.3f %9.3f %9.3f" % \
-                    (F2[0],F2[1],F2[2],T2[0],T2[1],T2[2]) )
-              print("  R2xF2 = %9.3f %9.3f %9.3f " % vecCrossP(R2,F2) )
-              """
-              sumMx = sumMx + R1[1]*F1[2] - R1[2]*F1[1] + T1[0]
-              sumMz = sumMz + R1[0]*F1[1] - R1[1]*F1[0] + T1[2]
-              sumFy = sumFy + F1[1]
-              """
-              sumMx = sumMx + R2[1]*F2[2] - R2[2]*F2[1] + T2[0]
-              sumMz = sumMz + R2[0]*F2[1] - R2[1]*F2[0] + T2[2]
-              sumFy = sumFy + F2[1]
-              """
-          
+
+    g = self.world.getGravity()
+
+    for s in self.frame.solids:
+      b = s.body
+      p = s.cmpos[s.knt%3][0:]
+      v = s.cmvel
+      a = s.cmacc
+      m = b.getMass().mass
+      I = b.getMass().I
+      #p = b.getPosition()
+      #v = b.getLinearVel()
+      w = b.getAngularVel()
+      if self.actions.debug:
+        print("s.cmvel = %8.3f %8.3f %8.3f  b.LinVel = %8.3f %8.3f %8.3f" % \
+              (s.cmvel[0], s.cmvel[1], s.cmvel[2], v[0], v[1], v[2]))
+      sumMx = sumMx + m*(p[2]*(a[1]+g[1]) - p[1]*(a[2]+g[2])) - I[0][0]*w[0]
+      sumMz = sumMz + m*(p[0]*(a[1]+g[1]) - p[1]*(a[0]+g[0])) - I[2][2]*w[2]
+      sumFy = sumFy + m*(a[1]+g[1])
+
     if ( sumFy == 0.0 ) :
       (x, y, z) = self.calcCenterOfMass()
     else :
       x = sumMz/sumFy
       y = 0.0
       z = sumMx/sumFy
-     
-    #print("ZMP = %f %f %f" % (x,y,z) )
+
+    if self.actions.debug:
+      print("ZMP = %f %f %f" % (x,y,z) )
+
+    return (x, 0.0, z)
+
+  def calcZMPfromJointFeedback(self):
+    """
+    Calculate figure's Zero Moment Point in world space reference frame
+    coordinates; transform to rotated gravity coordinates as required.
+    :return: (x,0,z) point on world floor plane
+    """
+    if self.actions.debug:
+      print("=== calcZMP:")
+    
+    sumMx = 0.0
+    sumMz = 0.0
+    sumFy = 0.0
+
+    last_fixed_b2  = None
+
+    for j in self.frame.joints:
+      name = j.label
+      b1   = j.getBody(0)
+      b2   = j.getBody(1)
+      if isinstance(j,ode.FixedJoint) :
+        j1Pos = b2.getPosition()
+        j2Pos = b2.getPosition()
+        last_fixed_b2 = b2
+      else :
+        j1Pos = j.getAnchor()
+        j2Pos = j.getAnchor2()
+        last_fixed_b2 = None
+      b1Pos = b1.getPosition()
+      R1    = vecSub(j1Pos,b1Pos)
+      b2Pos = b2.getPosition()
+      R2    = vecSub(j2Pos,b2Pos)
+      fb    = j.getFeedback()
+      if fb :
+        F1 = fb[0]
+        T1 = fb[1]
+        F2 = fb[2]
+        T2 = fb[3]
+        if (True not in [isnan(F1[i]) for i in range(len(F1))]) and \
+           (True not in [isnan(T1[i]) for i in range(len(T1))]) :
+          f1sq = vecMagSq(F1)
+          t1sq = vecMagSq(T1)
+          if ((not isinf(f1sq)) and (f1sq >= 0.0)) and \
+             ((not isinf(t1sq)) and (t1sq >= 0.0)) :
+
+            if self.actions.debug:
+              m1 = b1.solid.mass
+              r1 = vecMag(R1)
+              f1 = vecMag(F1)
+              t1 = vecMag(T1)
+              m2 = b2.solid.mass
+              r2 = vecMag(R2)
+              f2 = vecMag(F2)
+              t2 = vecMag(T2)
+              print("%s : " % name)
+              print("%s : %8.3f %8.3f %9.3f %9.3f" % (b1.solid.label,m1,r1,f1,t1))
+              print("  F1 = %9.3f %9.3f %9.3f  T1 = %9.3f %9.3f %9.3f" % \
+                    (F1[0],F1[1],F1[2],T1[0],T1[1],T1[2]) )
+              print("  R1xF1 = %9.3f %9.3f %9.3f " % vecCrossP(R1,F1))
+              print("%s : %8.3f %8.3f %9.3f %9.3f" % (b2.solid.label, m2, r2, f2, t2))
+              print("  F2 = %9.3f %9.3f %9.3f  T2 = %9.3f %9.3f %9.3f" % \
+                    (F2[0], F2[1], F2[2], T2[0], T2[1], T2[2]))
+              print("  R2xF2 = %9.3f %9.3f %9.3f " % vecCrossP(R2, F2))
+            sumMx = sumMx + R1[1] * F1[2] - R1[2] * F1[1] + T1[0]
+            sumMz = sumMz + R1[0] * F1[1] - R1[1] * F1[0] + T1[2]
+            sumFy = sumFy + F1[1]
+            if last_fixed_b2 is None :
+               sumMx = sumMx + R2[1]*F2[2] - R2[2]*F2[1] + T2[0]
+               sumMz = sumMz + R2[0]*F2[1] - R2[1]*F2[0] + T2[2]
+               sumFy = sumFy + F2[1]
+
+    if ( sumFy == 0.0 ) :
+      (x, y, z) = self.calcCenterOfMass()
+    else :
+      x = sumMz/sumFy
+      y = 0.0
+      z = sumMx/sumFy
+
+    if self.actions.debug:
+      print("ZMP = %f %f %f" % (x,y,z) )
+
     return (x, 0.0, z)
     
   def setZMP(self,zmp):

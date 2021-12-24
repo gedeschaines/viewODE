@@ -330,6 +330,11 @@ class Actions :
   def standFixed(self,t,tstep):
     """ Maintain figure's balance while in a standing posture at 
         a fixed location.
+        References:
+        [1] Mario  Ricardo  Arbul´u  Saavedra  “Stable  locomotion  of  humanoid
+            robots based on mass concentrated model” Ph. D thesis, October 2008
+        [2] Dr. D. Kostic “Zero-moment point method for stable biped walking”
+            Eindhoven, University of Technology, DCT no.: 2009.072, July 2009
     """
     fig = self.figure
 
@@ -339,7 +344,7 @@ class Actions :
     
     # Calculate figure's center of mass velocity and acceleration.
     cmpos = fig.calcCenterOfMass()
-    if self.last_cmpos : 
+    if self.last_cmpos :
       cmvel = vecMulS(vecSub(cmpos,self.last_cmpos), 1.0/tstep)
       cmacc = vecMulS(vecSub(cmvel,self.last_cmvel), 1.0/tstep)
     else : 
@@ -348,17 +353,20 @@ class Actions :
       self.t0 = t  
     self.last_cmpos = cmpos
     self.last_cmvel = cmvel
-    
+
+    # Update figure's frame solids position, velocity and acceleration.
+    self.frame.updateFrameSolidsPosVelAcc(t, tstep)
+
     # Calculate center of gravity position wrt figure's origin.
     cgpos = vecSub(cmpos, fig.origin)
     
     # Calculate the zero moment point on the ground plane as
-    # measured from the figure's origin.
+    # measured from the figure's origin (eqs. 3.20 & 3.21
+    # from ref [2]).
     zmpx = cgpos[0] - (cgpos[1]/9.81)*cmacc[0]
     zmpy = 0.0
     zmpz = cgpos[2] - (cgpos[1]/9.81)*cmacc[2]
     fig.setZMP(vecAdd((zmpx, zmpy, zmpz),fig.origin))
-    #(zmpx, zmpy, zmpz) = vecSub(fig.getZMP(),fig.origin)
     
     # Estimate where center of mass will be next half tstep.
     htstep = tstep/2.0
@@ -668,7 +676,13 @@ class Actions :
       rotateAxisToZero(h_motor, 1, TOL, RATE)
 
   def Walk(self, t, tstep):
-    
+    """ Walk at a fixed pace.
+        References:
+        [1] Mario  Ricardo  Arbul´u  Saavedra  “Stable  locomotion  of  humanoid
+            robots based on mass concentrated model” Ph. D thesis, October 2008
+        [2] Dr. D. Kostic “Zero-moment point method for stable biped walking”
+            Eindhoven, University of Technology, DCT no.: 2009.072, July 2009
+    """
     if not self.walking : return
     if not self.frame   : return
       
@@ -681,28 +695,47 @@ class Actions :
       # Disable floor to prevent foot collisions
       self.figure.floor.disable()
 
-    # Calculate figure's zero moment point.
-    fig   = self.figure
-    zmpnt = vecSub(fig.getZMP(),fig.origin)
-    
-    # Calculate balancing force to keep figure upright
+    # Calculate balancing force to keep figure upright.
+
+    fig     = self.figure
     totmass = fig.getTotMass()
     cmpos   = fig.calcCenterOfMass()
     pelvis  = fig.pelvis.body
-    torso   = fig.torso.body
-    tpos    = torso.getPosition()
-    cgpos   = vecSub(cmpos,tpos)
- 
-    if self.last_cmpos : 
+
+    # Calculate the zero moment point on the ground plane as
+    # measured from the world space origin (eqs. 3.17 & 3.18
+    # from ref [2]).
+    zmp = fig.calcZMP()
+    fig.setZMP(zmp)
+
+    # Calculate center of gravity position wrt figure's torso position.
+    torso = fig.torso.body
+    tpos  = torso.getPosition()
+    cgpos = vecSub(cmpos,tpos)
+
+    # Calculate figure's center of mass velocity and acceleration.
+    if self.last_cmpos :
       cmvel = vecMulS(vecSub(cmpos,self.last_cmpos), 1.0/tstep)
       cmacc = vecMulS(vecSub(cmvel,self.last_cmvel), 1.0/tstep)
     else : 
       cmvel   = (0.0, 0.0, 0.0)
       cmacc   = (0.0, 0.0, 0.0)
-      self.t0 = t      
+      self.t0 = t
     self.last_cmpos = cmpos
     self.last_cmvel = cmvel
-        
+
+    # Update figure's frame solids position, velocity and acceleration.
+    self.frame.updateFrameSolidsPosVelAcc(t, tstep)
+
+    # Calculate the zero moment point on the ground plane as
+    # measured from the world space origin (eqs. 3.20 & 3.21
+    # from ref [2]).
+    #zmpx = cmpos[0] - (cmpos[1]/9.81)*cmacc[0]
+    #zmpy = 0.0
+    #zmpz = cmpos[2] - (cmpos[1]/9.81)*cmacc[2]
+    #zmp = (zmpx, zmpy, zmpz)
+    fig.setZMP(zmp)
+
     # Calculate hip and waist angle limits and angular velocity
     # from desired walking speed and extended leg length
     speed      = 2.0
@@ -752,7 +785,7 @@ class Actions :
       
     if self.debug :
       print("Walk:  t=%8.4f" % (t))
-      print("  zmpnt: (%8.3f | %8.3f | %8.3f)" % zmpnt)
+      print("  zmp:   (%8.3f | %8.3f | %8.3f)" % zmp)
       print("  cmpos: (%8.3f | %8.3f | %8.3f)" % cmpos)
       print("  cmvel: (%8.3f | %8.3f | %8.3f)" % cmvel)
       print("  cmacc: (%8.3f | %8.3f | %8.3f)" % cmacc)

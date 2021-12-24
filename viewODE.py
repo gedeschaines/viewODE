@@ -492,7 +492,16 @@ def _idlefunc():
       
       # Simulation step
       world.step(tstep)
-      figure.setZMP(figure.calcZMP())
+
+      if figure.actions.debug :
+        com = figure.calcCenterOfMass()
+        print("com : t=%8.4f, x=%8.4f, y=%8.4f, z=%8.4f" % (t, com[0], com[1], com[2]))
+        copR = figure.getCOP('R')
+        print("copR : t=%8.4f, x=%8.4f, y=%8.4f, z=%8.4f" % (t, copR[0], copR[1], copR[2]))
+        copL = figure.getCOP('L')
+        print("copL : t=%8.4f, x=%8.4f, y=%8.4f, z=%8.4f" % (t, copL[0], copL[1], copL[2]))
+        zmp = figure.getZMP()
+        print("zmp : t=%8.4f, x=%8.4f, y=%8.4f, z=%8.4f" % (t, zmp[0], zmp[1], zmp[2]))
 
       # Remove all contact joints
       contactgroup.empty()

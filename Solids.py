@@ -54,6 +54,11 @@ class Solids:
     self.r1      = 0.0
     self.r2      = 0.0
     self.h       = 0.0
+    self.t0      = 0.0
+    self.knt     = 0
+    self.cmpos   = [[],[],[]]
+    self.cmvel   = []
+    self.cmacc   = []
     
 def solidLabel(side, name):
   """
