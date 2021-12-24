@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # txt2dat.py:  Extracts joint data from the given .txt file to create an
 #              xgraph .dat file.
 
@@ -59,7 +59,7 @@ def save_data_gnuplot(outfile, cols, data):
     f = open(outfile, "w")
     f.write('# File: "' + outfile + '"\n')
     f.write('set xlabel "Time (sec)"\n')
-    f.write('set key left top \n')
+    f.write('set key left top\n')
     f.write("$JointData << EOD\n")
     f.write(' '.join(cols) + "\n")
     for n in range(len(data)):
@@ -76,7 +76,7 @@ def load_data(infile,joint,rdamp) :
   cols  = ['t']
   data  = []
   time0 = 0.0
-  tstep = 0.005
+  tstep = 0.0025  # NOTE: This must match tstep in viewODE.py
   index = 0
   with open(infile,"r") as f :
     for linen in f :
@@ -97,7 +97,8 @@ def load_data(infile,joint,rdamp) :
             if cols[k] == key : 
               found = True
               ksave = k
-            else : k += 1
+            else :
+              k += 1
           if not found : 
             cols.append(key)
             ksave = k
@@ -106,7 +107,7 @@ def load_data(infile,joint,rdamp) :
             if not data : 
               time0 = time 
               data.append( (time,[time]) )
-            index = int( (float(time)-float(time0)+ tstep/2.0)/tstep )
+            index = int( (float(time)-float(time0)+tstep/2.0)/tstep )
             if index > len(data)-1 : 
               for n in range(index-(len(data)-1)) :
                 data.append( (time,[time]) )
@@ -114,13 +115,14 @@ def load_data(infile,joint,rdamp) :
           else :
             if key == 'p'    : val = format_string("%3d",int(val)*100)
             if key == 'ang1' : val = format_string("%7.2f",float(val)*DPR)
-            if key == 'ang2' : val = format_string("%7.2f", float(val)*DPR)
+            if key == 'ang2' : val = format_string("%7.2f",float(val)*DPR)
             if key == 'ar1'  : val = format_string("%9.2f",float(val)*DPR)
             if key == 'ar2'  : val = format_string("%9.2f",float(val)*DPR)
             if rdamp :
               if key == 'Td1' : val = format_string("%9.2f",float(val)*DPR)
               if key == 'Td2' : val = format_string("%9.2f",float(val)*DPR)
-            if ksave > len(data[index][1])-1 : data[index][1].append(val)
+            if ksave > len(data[index][1])-1 :
+              data[index][1].append(val)
             elif data[index][1][ksave] != val :
               print("error:", time, index, key, ksave, val, data[index][1][ksave])
               print(" line:", linen)
