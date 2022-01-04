@@ -459,13 +459,18 @@ class Render:
     Draw an ODE body in OpenGL.
     """
     
-    body  = solid.body
-    x,y,z = body.getPosition()
-    R     = body.getRotation()
-    rot   = [R[0], R[3], R[6], 0.,
-             R[1], R[4], R[7], 0.,
-             R[2], R[5], R[8], 0.,
-             x, y, z, 1.0]
+    body = solid.body
+    if solid.knt > 0:
+      # use position from solid's cmpos circular buffer
+      (x, y, z) = solid.cmpos[(solid.knt-1) % 3][0:]
+    else:
+      # use position of solid's body
+      (x, y, z) = body.getPosition()
+    R   = body.getRotation()
+    rot = [R[0], R[3], R[6], 0.,
+           R[1], R[4], R[7], 0.,
+           R[2], R[5], R[8], 0.,
+           x, y, z, 1.0]
          
     glPushMatrix()
     glRotatef(self.rotationY, 0.0, 1.0, 0.0)

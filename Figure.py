@@ -693,11 +693,14 @@ class Figure:
     self.target = target
     self.t = t
     self.tstep = tstep
-     
+
+    # Update figure's frame solids position, velocity and acceleration.
+    self.frame.updateFrameSolidsPosVelAcc(t, tstep)
+
     if not self.frame.joints : 
       # Figure has collapsed
       return
-    
+
     # Update figure animation state
     if body : 
       if body == target : 
@@ -947,21 +950,29 @@ class Figure:
     sumMz = 0.0
     sumFy = 0.0
 
-    g = self.world.getGravity()
+    if self.actions.inStrideTest():
+      g = vecDivS(self.head.body.getForce(),self.getTotMass())
+    else:
+      g = self.world.getGravity()
 
     for s in self.frame.solids:
       b = s.body
-      p = s.cmpos[s.knt%3][0:]
+      p = s.cmpos[(s.knt-1) % 3][0:]
       v = s.cmvel
       a = s.cmacc
       m = b.getMass().mass
       I = b.getMass().I
-      #p = b.getPosition()
-      #v = b.getLinearVel()
       w = b.getAngularVel()
-      if self.actions.debug:
-        print("s.cmvel = %8.3f %8.3f %8.3f  b.LinVel = %8.3f %8.3f %8.3f" % \
-              (s.cmvel[0], s.cmvel[1], s.cmvel[2], v[0], v[1], v[2]))
+      if self.actions.debug and s.label == "pelvis":
+        print("%s: knt = %d" % (s.label,s.knt))
+        pb = b.getPosition()
+        vb = b.getLinearVel()
+        print("s.cmpos = %9.5f %9.5f %9.5f  b.Pos = %9.5f %9.5f %9.5f" % \
+               (p[0], p[1], p[2], pb[0], pb[1], pb[2]))
+        print("s.cmvel = %9.5f %9.5f %9.5f  b.LinVel = %9.5f %9.5f %9.5f" % \
+               (v[0], v[1], v[2], vb[0], vb[1], vb[2]))
+        print("s.cmacc = %9.5f %9.5f %9.5f  b.AngVel = %9.5f %9.5f %9.5f" % \
+               (a[0], a[1], a[2], w[0], w[1], w[2]))
       sumMx = sumMx + m*(p[2]*(a[1]+g[1]) - p[1]*(a[2]+g[2])) - I[0][0]*w[0]
       sumMz = sumMz + m*(p[0]*(a[1]+g[1]) - p[1]*(a[0]+g[0])) - I[2][2]*w[2]
       sumFy = sumFy + m*(a[1]+g[1])

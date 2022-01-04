@@ -489,9 +489,6 @@ def _idlefunc():
       space.collide((world,contactgroup), near_callback)
       figure.setCOP('R')
       figure.setCOP('L')
-      
-      # Simulation step
-      world.step(tstep)
 
       if figure.actions.debug :
         com = figure.calcCenterOfMass()
@@ -502,6 +499,9 @@ def _idlefunc():
         print("copL : t=%8.4f, x=%8.4f, y=%8.4f, z=%8.4f" % (t, copL[0], copL[1], copL[2]))
         zmp = figure.getZMP()
         print("zmp : t=%8.4f, x=%8.4f, y=%8.4f, z=%8.4f" % (t, zmp[0], zmp[1], zmp[2]))
+
+      # Simulation step
+      world.step(tstep)
 
       # Remove all contact joints
       contactgroup.empty()

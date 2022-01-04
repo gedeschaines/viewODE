@@ -354,9 +354,6 @@ class Actions :
     self.last_cmpos = cmpos
     self.last_cmvel = cmvel
 
-    # Update figure's frame solids position, velocity and acceleration.
-    self.frame.updateFrameSolidsPosVelAcc(t, tstep)
-
     # Calculate center of gravity position wrt figure's origin.
     cgpos = vecSub(cmpos, fig.origin)
     
@@ -723,9 +720,6 @@ class Actions :
       self.t0 = t
     self.last_cmpos = cmpos
     self.last_cmvel = cmvel
-
-    # Update figure's frame solids position, velocity and acceleration.
-    self.frame.updateFrameSolidsPosVelAcc(t, tstep)
 
     # Calculate the zero moment point on the ground plane as
     # measured from the world space origin (eqs. 3.20 & 3.21

@@ -857,7 +857,7 @@ class Frame:
     :param tstep: simulation time step
     :return: none
     """
-    MIDX = ((0,1,2),(1,2,0),(2,0,1))
+    KIDX = ((0,1,2),(1,2,0),(2,0,1))  # cmpos indexes for update count
     for s in self.solids:
       cmpos = s.body.getPosition()
       if s.knt == 0:
@@ -872,12 +872,24 @@ class Frame:
         cmvel = vecDivS(vecSub(s.cmpos[1], s.cmpos[0]), tstep)
         cmacc = vecDivS(vecSub(cmvel, s.cmvel), tstep)
       else:
-        # use 3-point central difference expressions
-        m   = (s.knt+1) % 3
-        idx = MIDX[m][0:]
+        # use 3-point central difference method
+        k  = (s.knt+1) % 3
+        idx = KIDX[k][0:]
         s.cmpos[idx[2]] = cmpos
         cmvel = vecDivS(vecSub(s.cmpos[idx[2]],s.cmpos[idx[0]]),2*tstep)
         cmacc = vecDivS(vecSub(vecAdd(s.cmpos[idx[2]],s.cmpos[idx[0]]),vecMulS(s.cmpos[idx[1]],2)),tstep*tstep)
-      s.knt   = s.knt + 1
+        if self.figure.actions.debug and s.label == "pelvis":
+           print("%s: knt = %4d  k = %1d  idx = %1d, %1d, %1d" % (s.label,s.knt,k,idx[0],idx[1],idx[2]))
+           print("s.cmpos[idx[0]] = %12.9f, %12.9f, %12.9f" % \
+              (s.cmpos[idx[0]][0], s.cmpos[idx[0]][1], s.cmpos[idx[0]][2]))
+           print("s.cmpos[idx[1]] = %12.9f, %12.9f, %12.9f" % \
+              (s.cmpos[idx[1]][0], s.cmpos[idx[1]][1], s.cmpos[idx[1]][2]))
+           print("s.cmpos[idx[2]] = %12.9f, %12.9f, %12.9f" % \
+              (s.cmpos[idx[2]][0], s.cmpos[idx[2]][1], s.cmpos[idx[2]][2]))
+           print("s.cmvel = %9.5f, %9.5f, %9.5f" % \
+              (cmvel[0], cmvel[1], cmvel[2]))
+           print("s.cmacc = %9.5f, %9.5f, %9.5f" % \
+              (cmacc[0], cmacc[1], cmacc[2]))
+      s.knt += 1
       s.cmvel = cmvel
       s.cmacc = cmacc
