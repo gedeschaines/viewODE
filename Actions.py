@@ -756,10 +756,7 @@ class Actions :
     Wmagx = vecDotP(Wvec, (1.0,0.0,0.0))
     Wmagy = vecDotP(Wvec, (0.0,1.0,0.0))
     Wvec  = (Wmagx, Wmagy, 0.0)
-    wvel  = (0.0, 0.0, speed)
-    # tvel = vecSub(wvel, torso.getLinearVel())
-    # Vvec = vecSub(cmvel,projectVecAonUB(cmvel,(0.0, 1.0, 0.0)))
-    Vvec = wvel
+    Vvec  = vecSub(cmvel,projectVecAonUB(cmvel,(0.0, 1.0, 0.0)))  # horiz cmvel
     if not self.inStrideTest() :
       torso.setLinearVel(Vvec)
       torso.setAngularVel(Wvec)
@@ -771,7 +768,7 @@ class Actions :
     if self.toesTouchingGround(r_foot) or \
        self.toesTouchingGround(l_foot)    :
       (gx, gy, gz) = fig.world.getGravity()
-      Fvec = (0.0, -0.45*totmass*gy, 0.0)
+      Fvec = (0.0, -0.0*totmass*gy, 0.0)
     else :
       Fvec = (0.0, 0.0, 0.0)
     if not self.inStrideTest() :
