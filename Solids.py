@@ -54,11 +54,13 @@ class Solids:
     self.r1      = 0.0
     self.r2      = 0.0
     self.h       = 0.0
-    self.t0      = 0.0         # cm initialization time
-    self.knt     = 0           # cm update counter
-    self.cmpos   = [[],[],[]]  # cm position vector circular buffer
-    self.cmvel   = []          # cm velocity vector
-    self.cmacc   = []          # cm acceleration vector
+    self.t0      = 0.0                # center of mass (com) initialization time
+    self.knt     = 0                  # com update counter
+    self.cmpos   = [(0.0, 0.0, 0.0),
+                    (0.0, 0.0, 0.0),
+                    (0.0, 0.0, 0.0)]  # com position vector circular buffer
+    self.cmvel   = (0.0, 0.0, 0.0)    # com velocity vector
+    self.cmacc   = (0.0, 0.0, 0.0)    # com acceleration vector
     
 def solidLabel(side, name):
   """

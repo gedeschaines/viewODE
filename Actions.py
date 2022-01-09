@@ -55,9 +55,7 @@ class Actions :
     self.reaching    = False
     self.angerr_tol  = 0.5*RPD
     self.angvel_max  = TWOPI/2.0
-    self.t0          = 0.0
-    self.last_cmpos  = []
-    self.last_cmvel  = []
+    self.walk_t0     = []
     
   def debugOn(self)     : self.debug = True
   def debugOff(self)    : self.debug = False
@@ -156,9 +154,7 @@ class Actions :
       self.kicking     = False
       self.standing    = False
       self.standingup  = False
-      self.last_cmpos  = []
-      self.last_cmvel  = []
-      self.t0          = 0.0
+      self.walk_t0     = []
       self.printConfig()
       
   def setWalkOff(self):
@@ -180,8 +176,7 @@ class Actions :
     self.walking     = False
     self.kicking     = False
     self.reaching    = False
-    self.last_cmpos  = []
-    self.last_cmvel  = []
+    self.walk_t0     = []
     self.figure.floor.enable()
     
   def printConfig(self):
@@ -341,18 +336,11 @@ class Actions :
     # Calculate gravity angle about world x-axis; same as forward slope angle
     gvec = fig.world.getGravity()
     angx = atan2(-gvec[2]/9.81, -gvec[1]/9.81)*DPR
-    
-    # Calculate figure's center of mass velocity and acceleration.
-    cmpos = fig.calcCenterOfMass()
-    if self.last_cmpos :
-      cmvel = vecMulS(vecSub(cmpos,self.last_cmpos), 1.0/tstep)
-      cmacc = vecMulS(vecSub(cmvel,self.last_cmvel), 1.0/tstep)
-    else : 
-      cmvel = (0.0, 0.0, 0.0)
-      cmacc = (0.0, 0.0, 0.0)
-      self.t0 = t  
-    self.last_cmpos = cmpos
-    self.last_cmvel = cmvel
+
+    # Get figure's center of mass position, velocity and acceleration.
+    cmpos = fig.getCenterOfMassPos()
+    cmvel = fig.getCenterOfMassVel()
+    cmacc = fig.getCenterOfMassAcc()
 
     # Calculate center of gravity position wrt figure's origin.
     cgpos = vecSub(cmpos, fig.origin)
@@ -692,12 +680,19 @@ class Actions :
       # Disable floor to prevent foot collisions
       self.figure.floor.disable()
 
-    # Calculate balancing force to keep figure upright.
+    # Set walking cycle start time
+    if not self.walk_t0 :
+      self.walk_t0 = t
 
+    # Calculate balancing force to keep figure upright.
     fig     = self.figure
     totmass = fig.getTotMass()
-    cmpos   = fig.calcCenterOfMass()
     pelvis  = fig.pelvis.body
+
+    # Get figure's center of mass position, velocity and acceleration.
+    cmpos = fig.getCenterOfMassPos()
+    cmvel = fig.getCenterOfMassVel()
+    cmacc = fig.getCenterOfMassAcc()
 
     # Calculate the zero moment point on the ground plane as
     # measured from the world space origin (eqs. 3.17 & 3.18
@@ -709,17 +704,6 @@ class Actions :
     torso = fig.torso.body
     tpos  = torso.getPosition()
     cgpos = vecSub(cmpos,tpos)
-
-    # Calculate figure's center of mass velocity and acceleration.
-    if self.last_cmpos :
-      cmvel = vecMulS(vecSub(cmpos,self.last_cmpos), 1.0/tstep)
-      cmacc = vecMulS(vecSub(cmvel,self.last_cmvel), 1.0/tstep)
-    else : 
-      cmvel   = (0.0, 0.0, 0.0)
-      cmacc   = (0.0, 0.0, 0.0)
-      self.t0 = t
-    self.last_cmpos = cmpos
-    self.last_cmvel = cmvel
 
     # Calculate the zero moment point on the ground plane as
     # measured from the world space origin (eqs. 3.20 & 3.21
@@ -737,7 +721,7 @@ class Actions :
     anglim     = 0.5*(speed/dleg)
     anglimx2pi = anglim*TWOPI
 
-    tdel   = t - self.t0
+    tdel   = t - self.walk_t0
     rangv2 = sin(TWOPI*tdel+HALFPI)*anglimx2pi  # right hip ang vel
     langv2 = sin(TWOPI*tdel-HALFPI)*anglimx2pi  # left hip ang vel
     wangv  = langv2                             # waist ang vel
@@ -768,7 +752,7 @@ class Actions :
     if self.toesTouchingGround(r_foot) or \
        self.toesTouchingGround(l_foot)    :
       (gx, gy, gz) = fig.world.getGravity()
-      Fvec = (0.0, -0.0*totmass*gy, 0.0)
+      Fvec = (0.0, -0.0*totmass*gy, 0.0)  # no lifting force
     else :
       Fvec = (0.0, 0.0, 0.0)
     if not self.inStrideTest() :
@@ -1276,7 +1260,7 @@ class Actions :
       self.pushFootAgainstGround(l_foot, l_ankle, l_ball, pi/4.0, tstep)
       # Apply jumping force up through c.g.
       totmass = self.figure.getTotMass()
-      cmpos   = self.figure.calcCenterOfMass()
+      cmpos   = self.figure.getCenterOfMassPos()
       torso   = self.figure.torso.body
       tpos    = torso.getPosition()
       cgpos   = vecSub(cmpos,tpos)
@@ -1329,7 +1313,7 @@ class Actions :
       # Push down with this foot
       if self.pushFootAgainstGround(p_foot, p_ankle, p_ball, pi/4.0, tstep) :
         # Apply jumping force up through c.g.
-        cmpos = self.figure.calcCenterOfMass()
+        cmpos = self.figure.getCenterOfMassPos()
         torso = self.figure.torso.body
         tpos  = torso.getPosition()
         cgpos = vecSub(cmpos,tpos)

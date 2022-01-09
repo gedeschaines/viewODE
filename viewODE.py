@@ -491,8 +491,12 @@ def _idlefunc():
       figure.setCOP('L')
 
       if figure.actions.debug :
-        com = figure.calcCenterOfMass()
-        print("com : t=%8.4f, x=%8.4f, y=%8.4f, z=%8.4f" % (t, com[0], com[1], com[2]))
+        cmpos = figure.getCenterOfMassPos()
+        print("cmpos : t=%8.4f, x=%8.4f, y=%8.4f, z=%8.4f" % (t, cmpos[0], cmpos[1], cmpos[2]))
+        cmvel = figure.getCenterOfMassVel()
+        print("cmvel : t=%8.4f, x=%8.4f, y=%8.4f, z=%8.4f" % (t, cmvel[0], cmvel[1], cmvel[2]))
+        cmacc = figure.getCenterOfMassAcc()
+        print("cmacc : t=%8.4f, x=%8.4f, y=%8.4f, z=%8.4f" % (t, cmacc[0], cmacc[1], cmacc[2]))
         copR = figure.getCOP('R')
         print("copR : t=%8.4f, x=%8.4f, y=%8.4f, z=%8.4f" % (t, copR[0], copR[1], copR[2]))
         copL = figure.getCOP('L')

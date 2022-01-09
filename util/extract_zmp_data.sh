@@ -14,14 +14,16 @@
 #   $ Esc
 #   $ cd zout
 #   $ ../util/extract_zmp_data.sh
-#   $ gnuplot -p com_gnuplot.dat
+#   $ gnuplot -p cmpos_gnuplot.dat
+#   $ gnuplot -p cmvel_gnuplot.dat
+#   $ gnuplot -p cmacc_gnuplot.dat
 #   $ gnuplot -p copR_gnuplot.dat
 #   $ gnuplot -p copL_gnuplot.dat
 #   $ gnuplot -p zmp_gnuplot.dat
 
 ZMP_DATA_TXT_FILE=zmp_output.txt
 
-ZMP_LIST="com copR copL zmp"
+ZMP_LIST="cmpos cmvel cmacc copR copL zmp"
 
 for P in $ZMP_LIST
 do

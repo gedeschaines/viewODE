@@ -857,7 +857,7 @@ class Frame:
     :param tstep: simulation time step
     :return: none
     """
-    KIDX = ((0,1,2),(1,2,0),(2,0,1))  # cmpos indexes for update count
+    KIDX = [(0,1,2),(1,2,0),(2,0,1)]  # cmpos indexes for update count
     for s in self.solids:
       cmpos = s.body.getPosition()
       if s.knt == 0:

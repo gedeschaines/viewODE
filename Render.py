@@ -356,7 +356,7 @@ class Render:
     """
     Draw figure's CoM on the floor plane as a red diamond.
     """   
-    com = figure.calcCenterOfMass()
+    com = figure.getCenterOfMassPos()
     glDisable(GL_LIGHTING)   # Disable lighting in order for
     glColor3f(1.0, 0.0, 0.0) # lines to always be this color
     glPushMatrix()

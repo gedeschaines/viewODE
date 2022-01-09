@@ -96,11 +96,18 @@ class Figure:
 
     # Dynamic figure states
 
-    self.cgp_r_foot = []
-    self.cop_r_foot = (0.0, 0.0, 0.0)
-    self.cgp_l_foot = []
-    self.cop_l_foot = (0.0, 0.0, 0.0)
-    self.zmp        = (0.0, 0.0, 0.0)
+    self.t0         = 0.0                # center of mass (com) initialization time
+    self.knt        = 0                  # com update counter
+    self.cmpos      = [(0.0, 0.0, 0.0),
+                       (0.0, 0.0, 0.0),
+                       (0.0, 0.0, 0.0)]  # com position vector circular buffer
+    self.cmvel      = (0.0, 0.0, 0.0)    # com velocity vector
+    self.cmacc      = (0.0, 0.0, 0.0)    # com acceleration vector
+    self.cgp_r_foot = []                 # contact geom points for right foot
+    self.cop_r_foot = (0.0, 0.0, 0.0)    # center of pressure for right foot
+    self.cgp_l_foot = []                 # contact geom points for left foot
+    self.cop_l_foot = (0.0, 0.0, 0.0)    # center of pressure for left foot
+    self.zmp        = (0.0, 0.0, 0.0)    # zero moment point (ZMP)
 
     # Animation States
     
@@ -440,14 +447,20 @@ class Figure:
     print("   Arm Mass = %8.3f kg" % (self.getArmMass()) )
     print("   Leg Mass = %8.3f kg" % (self.getLegMass()) )
     print(" ")
-    print("Ref. Pos.   = (%8.3f, %8.3f, %8.3f)" % \
+    print("Figure Origin Position = (%8.3f, %8.3f, %8.3f)" % \
+          self.origin )
+    print("Ref. Pos. wrt origin   = (%8.3f, %8.3f, %8.3f)" % \
           vecSub(self.refpos,self.origin) )
-    print("CofM Pos.   = (%8.3f, %8.3f, %8.3f)" % \
+    print("CofM Pos. wrt origin   = (%8.3f, %8.3f, %8.3f)" % \
           vecSub(self.calcCenterOfMass(),self.origin) )
-    print("Pelvis Pos. = (%8.3f, %8.3f, %8.3f)" % \
-          vecSub(self.pelvis.body.getPosition(),self.origin) )      
-    print("Waist Pos.  = (%8.3f, %8.3f, %8.3f)" % \
+    print("Head Pos. wrt origin   = (%8.3f, %8.3f, %8.3f)" % \
+          vecSub(self.head.body.getPosition(),self.origin) )
+    print("Torso Pos. wrt origin  = (%8.3f, %8.3f, %8.3f)" % \
+          vecSub(self.torso.body.getPosition(),self.origin) )
+    print("Waist Pos. wrt origin  = (%8.3f, %8.3f, %8.3f)" % \
           vecSub(self.waist.body.getPosition(),self.origin) )
+    print("Pelvis Pos. wrt origin = (%8.3f, %8.3f, %8.3f)" % \
+          vecSub(self.pelvis.body.getPosition(),self.origin) )
     print(" ")
     self.printSolidProperties()
     print("............................................")
@@ -694,6 +707,9 @@ class Figure:
     self.t = t
     self.tstep = tstep
 
+    # Update figure's COM position, velocity and acceleration.
+    self.updateCenterOfMassPosVelAcc(t, tstep)
+
     # Update figure's frame solids position, velocity and acceleration.
     self.frame.updateFrameSolidsPosVelAcc(t, tstep)
 
@@ -866,7 +882,10 @@ class Figure:
     return self.tot_mass
   
   def calcCenterOfMass(self):
-    
+    """
+    Calculate figure's center of mass location in world space.
+    :return: location as (x,y,z) world space coordinates vector
+    """
     x = 0.0
     y = 0.0
     z = 0.0
@@ -885,7 +904,60 @@ class Figure:
     z = z/totmass
     
     return (x, y, z)
-    
+
+  def updateCenterOfMassPosVelAcc(self, t, tstep):
+    """
+    Update figure CoM position data points and use to estimate updated
+    velocity and acceleration.
+    :param t: simulation time
+    :param tstep: simulation time step
+    :return: none
+    """
+    KIDX = [(0, 1, 2), (1, 2, 0), (2, 0, 1)]  # cmpos indexes for update count
+    cmpos = self.calcCenterOfMass()
+    if self.knt == 0:
+      # initialize
+      self.t0 = t
+      self.cmpos[0] = cmpos
+      cmvel = (0.0, 0.0, 0.0)
+      cmacc = (0.0, 0.0, 0.0)
+    elif self.knt == 1:
+      # use 2-point difference expressions
+      self.cmpos[1] = cmpos
+      cmvel = vecDivS(vecSub(self.cmpos[1], self.cmpos[0]), tstep)
+      cmacc = vecDivS(vecSub(cmvel, self.cmvel), tstep)
+    else:
+      # use 3-point central difference method
+      k = (self.knt + 1) % 3
+      idx = KIDX[k][0:]
+      self.cmpos[idx[2]] = cmpos
+      cmvel = vecDivS(vecSub(self.cmpos[idx[2]], self.cmpos[idx[0]]), 2 * tstep)
+      cmacc = vecDivS(vecSub(vecAdd(self.cmpos[idx[2]], self.cmpos[idx[0]]), vecMulS(self.cmpos[idx[1]], 2)), tstep * tstep)
+      if self.actions.debug:
+        print("figure: knt = %4d  k = %1d  idx = %1d, %1d, %1d" % (self.knt, k, idx[0], idx[1], idx[2]))
+        print("cmpos[idx[0]] = %12.9f, %12.9f, %12.9f" % \
+              (self.cmpos[idx[0]][0], self.cmpos[idx[0]][1], self.cmpos[idx[0]][2]))
+        print("cmpos[idx[1]] = %12.9f, %12.9f, %12.9f" % \
+              (self.cmpos[idx[1]][0], self.cmpos[idx[1]][1], self.cmpos[idx[1]][2]))
+        print("cmpos[idx[2]] = %12.9f, %12.9f, %12.9f" % \
+              (self.cmpos[idx[2]][0], self.cmpos[idx[2]][1], self.cmpos[idx[2]][2]))
+        print("cmvel = %9.5f, %9.5f, %9.5f" % \
+              (cmvel[0], cmvel[1], cmvel[2]))
+        print("cmacc = %9.5f, %9.5f, %9.5f" % \
+              (cmacc[0], cmacc[1], cmacc[2]))
+    self.knt += 1
+    self.cmvel = cmvel
+    self.cmacc = cmacc
+
+  def getCenterOfMassPos(self):
+    return self.cmpos[(self.knt - 1) % 3][0:]
+
+  def getCenterOfMassVel(self):
+    return self.cmvel
+
+  def getCenterOfMassAcc(self):
+    return self.cmacc
+
   def calcCenterOfPressure(self, foot):
     
     x = 0.0
@@ -978,7 +1050,7 @@ class Figure:
       sumFy = sumFy + m*(a[1]+g[1])
 
     if ( sumFy == 0.0 ) :
-      (x, y, z) = self.calcCenterOfMass()
+      (x, y, z) = self.getCenterOfMassPos()
     else :
       x = sumMz/sumFy
       y = 0.0
@@ -1060,7 +1132,7 @@ class Figure:
                sumFy = sumFy + F2[1]
 
     if ( sumFy == 0.0 ) :
-      (x, y, z) = self.calcCenterOfMass()
+      (x, y, z) = self.getCenterOfMassPos()
     else :
       x = sumMz/sumFy
       y = 0.0
