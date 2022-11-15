@@ -112,7 +112,9 @@ class Render:
     glutInitDisplayMode (GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH)
     glutInitWindowPosition (self.x, self.y)
     glutInitWindowSize (self.width, self.height)
-    glutCreateWindow ("viewODE".encode())
+    self.windowID = glutCreateWindow ("viewODE".encode())
+    assert self.windowID > 0
+
     self.prepare_GL()
     
     # Register GLUT callbacks
@@ -130,6 +132,11 @@ class Render:
     glutKeyboardFunc (self.keyboardfunc)
     glutMouseFunc (self.mousefunc)
     glutMotionFunc (self.motionfunc)
+
+    # Create display lists
+
+    self.floor_grid = self.gridDisplayList(8, 8)
+    self.world_axes = self.axesDisplayList()
     
   def debugOn(self)    : self.debug = True
   def debugOff(self)   : self.debug = False
@@ -251,9 +258,39 @@ class Render:
 
     glutSwapBuffers()
     
-  def drawWorldAxes(self):
+  def drawGravityVector(self, gvec):
     """
-    Draws labeled world space reference system axes.
+    Draws world gravity direction vector as purple conic arrow
+    """
+    ugvec = vecDivS(gvec, 9.81)
+    rotx  = self.rotationX
+    angx  = acosVecDotP((0.0, -9.81, 0.0), gvec)*DPR
+    if angx > 0.0001:
+      # fixed world gravity is disabled; use rotx
+      angx = rotx
+
+    # arrow shaft as line
+    glColor3f(1.0, 0.0, 1.0)
+    glBegin(GL_LINES)
+    glVertex3f(0.0, 0.0, 0.0)
+    glVertex3f(ugvec[0], ugvec[1], ugvec[2])
+    glEnd()
+
+    # arrow head as cone
+    r1 = 0.05
+    r2 = 0.0
+    h  = 0.2
+    glTranslatef(ugvec[0], ugvec[1], ugvec[2])  # location of GLU cylinder base
+    glRotatef(90.0-angx, 1.0, 0.0, 0.0)         # Note: align GLU cylinder +z-axis
+                                                # with ODE gravity direction vector
+    quad = gluNewQuadric()
+    gluQuadricDrawStyle(quad, GLU_FILL)
+    gluCylinder(quad, r1, r2, h, 9, 1)
+    gluDeleteQuadric(quad)
+
+  def drawAxes(self):
+    """
+    Draw labeled world space reference system axes.
     """
     glColor3f(1.0, 0.0, 0.0)
     glBegin(GL_LINES)
@@ -294,56 +331,52 @@ class Render:
     glVertex3f( 0.1,-0.1, 1.0)
     glEnd()
 
-  def drawGravityVector(self, gvec):
-    """
-    Draws world gravity direction vector as purple conic arrow
-    """
-    ugvec = vecDivS(gvec, 9.81)
-    rotx  = self.rotationX
-    angx  = acosVecDotP((0.0, -9.81, 0.0), gvec)*DPR
-    if angx > 0.0001:
-      # fixed world gravity is disabled; use rotx
-      angx = rotx
+  def axesDisplayList(self):
+    dlist = glGenLists(1)
+    glNewList(dlist, GL_COMPILE)
+    self.drawAxes()
+    glEndList()
+    return dlist
 
-    # arrow shaft as line
-    glColor3f(1.0, 0.0, 1.0)
-    glBegin(GL_LINES)
-    glVertex3f(0.0, 0.0, 0.0)
-    glVertex3f(ugvec[0], ugvec[1], ugvec[2])
-    glEnd()
-
-    # arrow head as cone
-    r1 = 0.05
-    r2 = 0.0
-    h  = 0.2
-    glTranslatef(ugvec[0], ugvec[1], ugvec[2])  # location of GLU cylinder base
-    glRotatef(90.0-angx, 1.0, 0.0, 0.0)         # Note: align GLU cylinder +z-axis
-                                                # with ODE gravity direction vector
-    quad = gluNewQuadric()
-    gluQuadricDrawStyle(quad, GLU_FILL)
-    gluCylinder(quad, r1, r2, h, 9, 1)
-    gluDeleteQuadric(quad)
-
-  def renderFloor(self):
+  def drawGrid(self, nx, nz):
     """
-    Draw an ODE floor plane grid.
+    Draw nx by nz grid centered about origin of world 
+    space XZ plane.
     """
-    glDisable(GL_LIGHTING)   # Disable lighting in order for
-    glColor3f(0.0, 0.0, 0.0) # lines to always be this color
-    glPushMatrix()
-    glRotatef(self.rotationY, 0.0, 1.0, 0.0)
-    glRotatef(self.rotationX, 1.0, 0.0, 0.0)
-    for j in range(8):
-      z = 4.0 - j
-      for i in range(8):
-        x = -4.0 + i
+    xlim = float(nx)/2.0
+    zlim = float(nz)/2.0
+
+    for j in range(nz):
+      z = zlim - j
+      for i in range(nx):
+        x = -xlim + i
         glBegin(GL_LINE_LOOP)
         glVertex3f(x      , 0.0, z      )
         glVertex3f(x      , 0.0, z - 1.0)
         glVertex3f(x + 1.0, 0.0, z - 1.0)
         glVertex3f(x + 1.0, 0.0, z      )
         glEnd()
-    self.drawWorldAxes()
+
+  def gridDisplayList(self, nx, nz):
+    dlist = glGenLists(1)
+    glNewList(dlist, GL_COMPILE)
+    self.drawGrid(nx, nz)
+    glEndList()
+    return dlist
+
+  def renderFloor(self):
+    """
+    Render ODE floor plane grid with world space axes at origin.
+    """
+    glDisable(GL_LIGHTING)   # Disable lighting in order for
+    glColor3f(0.0, 0.0, 0.0) # lines to always be this color
+    glPushMatrix()
+    glRotatef(self.rotationY, 0.0, 1.0, 0.0)
+    glRotatef(self.rotationX, 1.0, 0.0, 0.0)
+
+    glCallList(self.floor_grid)
+    glCallList(self.world_axes)
+
     if self.figure is None :
       self.drawGravityVector((0.0,-9.81,0.0))
     else :

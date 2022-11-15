@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 # viewODE.py
 #
@@ -178,7 +178,10 @@ def resetSim(mode):
     print(" ")
     print("**** Simulation Reset ****")
     printConfig()
-  
+
+def null_display():
+  return
+
 def exitSim(reset_mode):
   """
   Performs reset operations prior to simulation exit.
@@ -188,7 +191,12 @@ def exitSim(reset_mode):
   """
   resetSim(reset_mode)
   ode.CloseODE()
-  exit (0)
+  glutDisplayFunc(null_display)
+  glutIdleFunc(None)
+  if renderer.windowID:
+    glutDestroyWindow(renderer.windowID)
+  if OpenGL.USE_FREEGLUT == True:
+    glutLeaveMainLoop()
   
 def printConfig():
   """
@@ -503,6 +511,7 @@ def _idlefunc():
         print("copL : t=%8.4f, x=%8.4f, y=%8.4f, z=%8.4f" % (t, copL[0], copL[1], copL[2]))
         zmp = figure.getZMP()
         print("zmp : t=%8.4f, x=%8.4f, y=%8.4f, z=%8.4f" % (t, zmp[0], zmp[1], zmp[2]))
+        figure.calcPelvisSumFandT()
 
       # Simulation step
       world.step(tstep)
@@ -599,3 +608,5 @@ if __name__ == '__main__':
   
   # Begin simulation
   glutMainLoop()
+
+  exit(0)
