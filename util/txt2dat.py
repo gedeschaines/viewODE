@@ -9,20 +9,25 @@ from locale     import format_string
 
 import sys, os
 
-def save_data_xgraph(outfile,cols,data):
+def save_data_xgraph(outfile, joint, stride, cols, data):
 
   colors = {0:'black', 1:'white', 2:'red', 3:'blue', 4:'green', 5:'violet', 6:'orange',
             7:'yellow', 8:'pink', 9:'cyan', 10:'light-gray', 11:'dark-grey', 12:'fuchia',
             13:'aqua', 14:'navy', 15:'gold'}
 
   f = open(outfile,"w")
-  f.write("Title = " + outfile + "\n")
+  if stride:
+    f.write("Title = " + joint + ": Hip, Knee and Ankle Rotation (ang), Hip Rotation Rate (angv)\n")
+  else:
+    f.write("Title = " + outfile + "\n")
   f.write("title_x = Time (sec)\n")
+  if stride:
+    f.write("title_y = Ang (deg), AngV (deg/sec)\n")
 
   # Data
   for k in range(len(cols)-1) :
     i = k + 1
-    if i < len(data[0][1])-1 :
+    if i < len(data[0][1]) :
       f.write("color = " + colors[i+1] + "\n")
     for n in range(len(data)) :
       if i < len(data[n][1]) :
@@ -47,6 +52,16 @@ def save_data_xgraph(outfile,cols,data):
     f.write("color = " + colors[i+1] + "\n")
     f.write("TITlE_LEGEND_LINE " + line + "\n")
     f.write("Text " + " ".join([str(x2+0.1), str(y)]) + "\n")
+    if stride and cols[i].find('_') > 0:
+      # use '_' to indicate start of subscript text
+      (str1, str2) = str.split(cols[i], '_')
+      if str1 == 'h':
+        str1 = "Hip"
+      elif str1 == 'k':
+        str1 = "Knee"
+      elif str1 == 'a':
+        str1 = "Ankle"
+      cols[i] = str1 + "_" + str2
     f.write(" " + cols[i] + "\n")
     f.write("End_Text\n")
     y += 0.2
@@ -54,17 +69,35 @@ def save_data_xgraph(outfile,cols,data):
   f.close()
 
 
-def save_data_gnuplot(outfile, cols, data):
+def save_data_gnuplot(outfile, joint, stride, cols, data):
 
     f = open(outfile, "w")
     f.write('# File: "' + outfile + '"\n')
+    if stride:
+      f.write('set title "' + joint + ': Hip, Knee and Ankle Rotation (ang); Hip Rotation Rate (angv)"\n')
     f.write('set xlabel "Time (sec)"\n')
-    f.write('set key left top\n')
+    if stride:
+      f.write('set ylabel "Ang (deg), AngV (deg/sec)"\n')
+    f.write('set key left top Left\n')
     f.write("$JointData << EOD\n")
+    for i in range(len(cols)):
+      if cols[i].find('_') < 1:
+        continue
+      # use '_' to indicate start of subscript text
+      (str1, str2) = str.split(cols[i], '_')
+      if stride:
+        if str1 == 'h':
+          str1 = "Hip"
+        elif str1 == 'k':
+          str1 = "Knee"
+        elif str1 == 'a':
+          str1 = "Ankle"
+      cols[i] = str1 + "_{" + str2 + "}"
     f.write(' '.join(cols) + "\n")
     for n in range(len(data)):
       f.write("%s %s\n" % (data[n][1][0], ' '.join(data[n][1][1:])))
     f.write("EOD\n")
+    f.write("set termopt enhanced\n")
     f.write("plot for [k=2:%s] $JointData using 1:k with lines title columnhead(k)\n" % (str(len(cols))))
     f.close()
 
@@ -87,7 +120,7 @@ def load_data(infile,joint,rdamp) :
       if name == joint :
         key_val_pairs = str.split(info, ', ')
         for key_val in  key_val_pairs :
-          (key, val) = str.split(key_val,'=')
+          (key, val) = str.split(key_val, '=')
           key   = str.strip(key)
           val   = str.strip(val)
           found = False
@@ -149,9 +182,16 @@ if __name__ == '__main__' :
 
   (cols, data) = load_data(infile, joint, rdamp)
 
+  if joint == "right_leg" or joint == "left_leg":
+    stride = True
+    (side,_)  = str.split(joint, '_')
+    joint = side[0].upper() + side[1:] + " Leg"
+  else:
+    stride = False
+
   if int(xgraph) == 1 :
     outfile = str.join('.', (name + '_xgraph', 'dat'))
-    save_data_xgraph(outfile, cols, data)
+    save_data_xgraph(outfile, joint, stride, cols, data)
   else :
     outfile = str.join('.', (name + '_gnuplot', 'dat'))
-    save_data_gnuplot(outfile, cols, data)
+    save_data_gnuplot(outfile, joint, stride, cols, data)
