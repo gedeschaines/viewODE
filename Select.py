@@ -14,8 +14,6 @@ from sys import exit
 # Import OpenGL modules for rendering and selection.
 
 try:
-  import OpenGL
-  OpenGL.USE_FREEGLUT = False
   from OpenGL.GL import *
   from OpenGL.GLU import *
   from OpenGL.GLUT import *

@@ -270,6 +270,7 @@ class Frame:
     waist.setPosition( (x, y, z) )
 
     joint = attachFixedJoint(frame,'C',pelvis,waist)
+    figure.pelvis.joint = joint
   
     # Torso
     

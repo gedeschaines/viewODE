@@ -34,9 +34,6 @@ import time
 # Import OpenGL modules for rendering and ODE module for dynamics.
 
 try:
-  import OpenGL
-  import OpenGL.GLU
-  OpenGL.USE_FREEGLUT = False
   from OpenGL.GL import *
   from OpenGL.GLU import *
   from OpenGL.GLUT import *
@@ -195,7 +192,7 @@ def exitSim(reset_mode):
   glutIdleFunc(None)
   if renderer.windowID:
     glutDestroyWindow(renderer.windowID)
-  if OpenGL.USE_FREEGLUT == True:
+  if callable(glutLeaveMainLoop):
     glutLeaveMainLoop()
   
 def printConfig():
@@ -375,7 +372,7 @@ def grab(body, tstep):
             
 def near_callback(args, geom1, geom2):
   """ 
-  Callback function for the collide() method.
+  Callback function for collide() method.
 
   This function checks if the given geoms do collide and creates contact
   joints if they do.

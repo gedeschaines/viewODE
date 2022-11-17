@@ -21,8 +21,6 @@ from sys import argv, exit
 # Import OpenGL modules for rendering and ODE module for body models.
 
 try:
-  import OpenGL
-  OpenGL.USE_FREEGLUT = False
   from OpenGL.GL import *
   from OpenGL.GLU import *
   from OpenGL.GLUT import *

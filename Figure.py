@@ -22,8 +22,6 @@ from sys import exit
 # Import ODE module for world, space, body and joint models.
 
 try:
-  import OpenGL
-  OpenGL.USE_FREEGLUT = False
   from OpenGL.GL import *
   from OpenGL.GLU import *
   from OpenGL.GLUT import *
@@ -1061,6 +1059,85 @@ class Figure:
 
     return (x, 0.0, z)
 
+  def calcPelvisSumFandT(self):
+
+    if self.actions.debug:
+      print("=== calcPelvisSumFandT:")
+
+    sumFx = 0.0
+    sumFy = 0.0
+    sumFz = 0.0
+    sumMx = 0.0
+    sumMy = 0.0
+    sumMz = 0.0
+
+    last_fixed_b2 = None
+
+    for j in [self.r_hip.joint, self.l_hip.joint, self.pelvis.joint]:
+      print(type(j))
+      name = j.label
+      b1 = j.getBody(0)
+      b2 = j.getBody(1)
+      if isinstance(j, ode.FixedJoint):
+        j1Pos = b2.getPosition()
+        j2Pos = b2.getPosition()
+        last_fixed_b2 = b2
+      else:
+        j1Pos = j.getAnchor()
+        j2Pos = j.getAnchor2()
+        last_fixed_b2 = None
+      b1Pos = b1.getPosition()
+      R1 = vecSub(j1Pos, b1Pos)
+      b2Pos = b2.getPosition()
+      R2 = vecSub(j2Pos, b2Pos)
+      fb = j.getFeedback()
+      if fb:
+        F1 = fb[0]
+        T1 = fb[1]
+        F2 = fb[2]
+        T2 = fb[3]
+        if (True not in [isnan(F1[i]) for i in range(len(F1))]) and \
+                (True not in [isnan(T1[i]) for i in range(len(T1))]):
+          f1sq = vecMagSq(F1)
+          t1sq = vecMagSq(T1)
+          if ((not isinf(f1sq)) and (f1sq >= 0.0)) and \
+                  ((not isinf(t1sq)) and (t1sq >= 0.0)):
+            if self.actions.debug:
+              m1 = b1.solid.mass
+              r1 = vecMag(R1)
+              f1 = vecMag(F1)
+              t1 = vecMag(T1)
+              m2 = b2.solid.mass
+              r2 = vecMag(R2)
+              f2 = vecMag(F2)
+              t2 = vecMag(T2)
+              print("%s : " % name)
+              print("%s : %8.3f %8.3f %9.3f %9.3f" % (b1.solid.label, m1, r1, f1, t1))
+              print("  F1 = %9.3f %9.3f %9.3f  T1 = %9.3f %9.3f %9.3f" % \
+                    (F1[0], F1[1], F1[2], T1[0], T1[1], T1[2]))
+              print("  R1xF1 = %9.3f %9.3f %9.3f " % vecCrossP(R1, F1))
+              print("%s : %8.3f %8.3f %9.3f %9.3f" % (b2.solid.label, m2, r2, f2, t2))
+              print("  F2 = %9.3f %9.3f %9.3f  T2 = %9.3f %9.3f %9.3f" % \
+                    (F2[0], F2[1], F2[2], T2[0], T2[1], T2[2]))
+              print("  R2xF2 = %9.3f %9.3f %9.3f " % vecCrossP(R2, F2))
+            sumFx = sumFx + F1[0]
+            sumFy = sumFy + F1[1]
+            sumFz = sumFz + F1[2]
+            sumMx = sumMx + R1[1] * F1[2] - R1[2] * F1[1] + T1[0]
+            sumMy = sumMy + R1[2] * F1[0] - R1[0] * F1[2] + T1[1]
+            sumMz = sumMz + R1[0] * F1[1] - R1[1] * F1[0] + T1[2]
+            if last_fixed_b2 is None:
+              pass
+              #sumFx = sumFx + F2[0]
+              #sumFy = sumFy + F2[1]
+              #sumFz = sumFz + F2[2]
+              #sumMx = sumMx + R2[1] * F2[2] - R2[2] * F2[1] + T2[0]
+              #sumMy = sumMy + R2[2] * F2[0] - R2[0] * F2[2] + T2[1]
+              #sumMz = sumMz + R2[0] * F2[1] - R2[1] * F2[0] + T2[2]
+
+    if self.actions.debug:
+      print("SumFandT = (%f %f %f)  (%f %f %f)" % (sumFx, sumFy, sumFz, sumMx, sumMy, sumMz))
+
   def calcZMPfromJointFeedback(self):
     """
     Calculate figure's Zero Moment Point in world space reference frame
@@ -1074,7 +1151,7 @@ class Figure:
     sumMz = 0.0
     sumFy = 0.0
 
-    last_fixed_b2  = None
+    last_fixed_b2 = None
 
     for j in self.frame.joints:
       name = j.label
@@ -1104,7 +1181,6 @@ class Figure:
           t1sq = vecMagSq(T1)
           if ((not isinf(f1sq)) and (f1sq >= 0.0)) and \
              ((not isinf(t1sq)) and (t1sq >= 0.0)) :
-
             if self.actions.debug:
               m1 = b1.solid.mass
               r1 = vecMag(R1)

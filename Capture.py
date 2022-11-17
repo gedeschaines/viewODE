@@ -11,8 +11,6 @@ from locale import format_string
 # Import OpenGL and PIL modules for capturing images from back framebuffer.
 
 try:
-  import OpenGL
-  OpenGL.USE_FREEGLUT = False
   from OpenGL.GL import *
   from OpenGL.GLU import *
   from OpenGL.GLUT import *
