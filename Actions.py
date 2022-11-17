@@ -326,9 +326,9 @@ class Actions :
     """ Maintain figure's balance while in a standing posture at 
         a fixed location.
         References:
-        [1] Mario  Ricardo  Arbul´u  Saavedra  “Stable  locomotion  of  humanoid
-            robots based on mass concentrated model” Ph. D thesis, October 2008
-        [2] Dr. D. Kostic “Zero-moment point method for stable biped walking”
+        [1] Mario Ricardo Arbulu Saavedra, 'Stable locomotion of humanoid robots
+            based on mass concentrated model' Ph.D. thesis, October 2008
+        [2] Dr. D. Kostic, 'Zero-moment point method for stable biped walking'
             Eindhoven, University of Technology, DCT no.: 2009.072, July 2009
     """
     fig = self.figure
@@ -663,9 +663,9 @@ class Actions :
   def Walk(self, t, tstep):
     """ Walk at a fixed pace.
         References:
-        [1] Mario  Ricardo  Arbul´u  Saavedra  “Stable  locomotion  of  humanoid
-            robots based on mass concentrated model” Ph. D thesis, October 2008
-        [2] Dr. D. Kostic “Zero-moment point method for stable biped walking”
+        [1] Mario Ricardo Arbulu Saavedra, 'Stable locomotion of humanoid robots
+            based on mass concentrated model' Ph.D. thesis, October 2008
+        [2] Dr. D. Kostic, 'Zero-moment point method for stable biped walking'
             Eindhoven, University of Technology, DCT no.: 2009.072, July 2009
     """
     if not self.walking : return

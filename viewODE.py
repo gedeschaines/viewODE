@@ -455,8 +455,8 @@ def _idlefunc():
       # to collision contact between bottom of feet and ground plane.
       figure.createFrame(0.0, 0.001, -2.0)
       ##_keyfunc('\x20', x, y)
-      (tgtpos, target) = create_target_object( world, \
-                                               space, \
+      (tgtpos, target) = create_target_object( world,
+                                               space,
                                                0.0, 3.5, 2.0 )
       target.setGravityMode(0)
       renderer.setRenderFigure(figure)

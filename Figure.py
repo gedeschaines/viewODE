@@ -1005,10 +1005,10 @@ class Figure:
     coordinates.
     :return: (x,0,z) point on world floor plane
     References:
-        [1] Mario  Ricardo  Arbul´u  Saavedra  “Stable  locomotion  of  humanoid
-            robots based on mass concentrated model” Ph. D thesis, October 2008
-        [2] Dr. D. Kostic “Zero-moment point method for stable biped walking”
-            Eindhoven, University of Technology, DCT no.: 2009.072, July 2009
+      [1] Mario Ricardo Arbulu Saavedra 'Stable locomotion of humanoid robots
+          based on mass concentrated model' Ph.D. thesis, October 2008
+      [2] Dr. D. Kostic 'Zero-moment point method for stable biped walking'
+          Eindhoven, University of Technology, DCT no.: 2009.072, July 2009
     """
     if self.actions.debug:
       print("=== calcZMP:")
