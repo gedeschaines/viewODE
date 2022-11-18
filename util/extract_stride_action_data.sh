@@ -5,12 +5,11 @@
 # starting in directory containing the viewODE.py file:
 #
 #   $ mkdir zout
-#   $ python3 viewODE.py 1>zout/stride_action_output.txt
+#   $ python3 viewODE.py 4.0 1>zout/stride_action_output.txt
 #   $ Z
 #   $ H
 #   $ Y
 #   $ W
-#   $ Esc
 #   $ cd zout
 #   $ ../util/extract_stride_action_data.sh
 #   $ gnuplot -p right_leg_gnuplot.dat
@@ -22,10 +21,10 @@ LEG_LIST="right_leg left_leg"
 
 for LEG in $LEG_LIST
 do
-  grep $LEG $ACTION_DATA_TXT_FILE > ${LEG}.txt
+  grep "$LEG" "$ACTION_DATA_TXT_FILE" > "${LEG}.txt"
 done
 
 for LEG in $LEG_LIST
 do
-  python3 ../util/txt2dat.py ${LEG}.txt $LEG "0"
+  python3 ../util/txt2dat.py "${LEG}.txt" "$LEG" "0"
 done

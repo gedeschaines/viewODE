@@ -5,13 +5,12 @@
 # starting in directory containing the viewODE.py file:
 #
 #   $ mkdir zout
-#   $ python3 viewODE.py 1>zout/zmp_output.txt
+#   $ python3 viewODE.py 4.0 1>zout/zmp_output.txt
 #   $ Z
 #   $ H
 #   $ Y
 #   $ D
 #   $ W
-#   $ Esc
 #   $ cd zout
 #   $ ../util/extract_zmp_data.sh
 #   $ gnuplot -p cmpos_gnuplot.dat
@@ -27,10 +26,10 @@ ZMP_LIST="cmpos cmvel cmacc copR copL zmp"
 
 for P in $ZMP_LIST
 do
-  grep $P $ZMP_DATA_TXT_FILE > ${P}.txt
+  grep "$P" "$ZMP_DATA_TXT_FILE" > "${P}.txt"
 done
 
 for P in $ZMP_LIST
 do
-  python3 ../util/txt2dat.py ${P}.txt $P "0"
+  python2 ../util/txt2dat.py "${P}.txt" "$P" "0"
 done
