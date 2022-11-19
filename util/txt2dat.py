@@ -18,6 +18,8 @@ def save_data_xgraph(outfile, joint, stride, cols, data):
     f = open(outfile, "w")
     if stride:
         f.write("Title = " + joint + ": Hip, Knee and Ankle Rotation (ang), Hip Rotation Rate (angv)\n")
+    elif joint in ['copR', 'copL']:
+        f.write("Title = " + joint + ": CoP (x,z) relative to CoM (x,z)\n")
     else:
         f.write("Title = " + outfile + "\n")
     f.write("title_x = Time (sec)\n")
@@ -74,6 +76,10 @@ def save_data_gnuplot(outfile, joint, stride, cols, data):
     f.write('# File: "' + outfile + '"\n')
     if stride:
         f.write('set title "' + joint + ': Hip, Knee and Ankle Rotation (ang); Hip Rotation Rate (angv)"\n')
+    elif joint in ['copR', 'copL']:
+        f.write('set title "' + joint + ': CoP_{x,z} relative to CoM_{x,z}"\n')
+    else:
+        f.write('set title "' + joint + '"\n')
     f.write('set xlabel "Time (sec)"\n')
     if stride:
         f.write('set ylabel "Ang (deg), AngV (deg/sec)"\n')

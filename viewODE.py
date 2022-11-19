@@ -511,8 +511,12 @@ def _idlefunc():
                 cmacc = figure.getCenterOfMassAcc()
                 print("cmacc : t=%8.4f, x=%8.4f, y=%8.4f, z=%8.4f" % (t, cmacc[0], cmacc[1], cmacc[2]))
                 copR = figure.getCOP('R')
+                if vecMag(copR) > 0.0:
+                    copR = (copR[0] - cmpos[0], copR[1], copR[2] - cmpos[2])
                 print("copR : t=%8.4f, x=%8.4f, y=%8.4f, z=%8.4f" % (t, copR[0], copR[1], copR[2]))
                 copL = figure.getCOP('L')
+                if vecMag(copL) > 0.0:
+                    copL = (copL[0] - cmpos[0], copL[1], copL[2] - cmpos[2])
                 print("copL : t=%8.4f, x=%8.4f, y=%8.4f, z=%8.4f" % (t, copL[0], copL[1], copL[2]))
                 zmp = figure.getZMP()
                 print("zmp : t=%8.4f, x=%8.4f, y=%8.4f, z=%8.4f" % (t, zmp[0], zmp[1], zmp[2]))
@@ -567,16 +571,16 @@ if __name__ == '__main__':
     t = 0.0
     t_msec = 0
     dt = 1.0 / float(fps)
-    dt_msec = dt * 1000.0
+    dt_msec = int(dt * 1000.0)
     nstep = 4
     tstep = dt / float(nstep)
     tstep_msec = tstep * 1000.0
     state = 0
 
     # Capture parameters
-    frame_rate = 25
-    frame_time = int(1000.0 / float(frame_rate))  # in milliseconds rounded
-    frame_time = dt_msec * (frame_time / dt_msec)  # to multiple of dt_msec
+    frame_rate = 25  # Note: frame_rate should be a divisor of fps
+    frame_time = int(1000.0 / float(frame_rate))        # in milliseconds rounded
+    frame_time = int(dt_msec * (frame_time / dt_msec))  # to multiple of dt_msec
     filename = "img"
 
     # Initialize OpenGL renderer-selector and PIL captor
