@@ -60,13 +60,23 @@ class Control:
         self.manip_joint = None
 
     def debugOn(self):
-        self.debug = True
+        # Only turn on if currently off.
+        if not self.debug:
+            self.debug = True
+            print("Control Debug ON")
 
     def debugOff(self):
-        self.debug = False
+        # Only turn off if currently on.
+        if self.debug:
+            self.debug = False
+            print("Control Debug OFF")
 
     def toggleDebug(self):
         self.debug = not self.debug
+        if self.debug:
+            print("Control Debug ON")
+        else:
+            print("Control Debug OFF")
 
     def resetConfig(self):
 
