@@ -75,14 +75,14 @@ def save_data_gnuplot(outfile, joint, stride, cols, data):
     f = open(outfile, "w")
     f.write('# File: "' + outfile + '"\n')
     if stride:
-        f.write('set title "' + joint + ': Hip, Knee and Ankle Rotation (ang); Hip Rotation Rate (angv)"\n')
+        f.write('set title "' + joint + ' Joint Motor Angle (ang), Angular Velocity (angv)"\n')
     elif joint in ['copR', 'copL']:
         f.write('set title "' + joint + ': CoP_{x,z} relative to CoM_{x,z}"\n')
     else:
-        f.write('set title "' + joint + '"\n')
+        f.write('set title "' + joint.replace('_','') + '"\n')
     f.write('set xlabel "Time (sec)"\n')
     if stride:
-        f.write('set ylabel "Ang (deg), AngV (deg/sec)"\n')
+        f.write('set ylabel "Motor Ang (deg), AngV (deg/sec)"\n')
     f.write('set key left top Left\n')
     f.write("$JointData << EOD\n")
     for i in range(len(cols)):
