@@ -890,12 +890,17 @@ class Frame:
     def updateFrameSolidsPosVelAcc(self, t, tstep):
         """
         Update frame solids position data points and use to estimate updated
-        velocity and acceleration.
+        velocity and acceleration with expressions tailored to one, two and
+        three position samples, and utilizing a three element circlar buffer.
+
         :param t: simulation time
         :param tstep: simulation time step
         :return: none
         """
-        KIDX = [(0, 1, 2), (1, 2, 0), (2, 0, 1)]  # cmpos indexes for update count
+        KIDX = [(0, 1, 2),
+                (1, 2, 0),
+                (2, 0, 1)]  # cmpos circular buffer indexes for update count+1 modulo 3
+        # Loop over all frame solids
         for s in self.solids:
             cmpos = s.body.getPosition()
             if s.knt == 0:
@@ -912,11 +917,72 @@ class Frame:
             else:
                 # use 3-point central difference method
                 k = (s.knt + 1) % 3
-                idx = KIDX[k][0:]
+                idx = (int(KIDX[k][0]), int(KIDX[k][1]), int(KIDX[k][2]))
                 s.cmpos[idx[2]] = cmpos
                 cmvel = vecDivS(vecSub(s.cmpos[idx[2]], s.cmpos[idx[0]]), 2 * tstep)
                 cmacc = vecDivS(vecSub(vecAdd(s.cmpos[idx[2]], s.cmpos[idx[0]]), vecMulS(s.cmpos[idx[1]], 2)),
                                 tstep * tstep)
+                if self.figure.actions.debug and s.label == "pelvis":
+                    print("%s: knt = %4d  k = %1d  idx = %1d, %1d, %1d" %
+                          (s.label, s.knt, k, idx[0], idx[1], idx[2]))
+                    print("s.cmpos[idx[0]] = %12.9f, %12.9f, %12.9f" %
+                          (s.cmpos[idx[0]][0], s.cmpos[idx[0]][1], s.cmpos[idx[0]][2]))
+                    print("s.cmpos[idx[1]] = %12.9f, %12.9f, %12.9f" %
+                          (s.cmpos[idx[1]][0], s.cmpos[idx[1]][1], s.cmpos[idx[1]][2]))
+                    print("s.cmpos[idx[2]] = %12.9f, %12.9f, %12.9f" %
+                          (s.cmpos[idx[2]][0], s.cmpos[idx[2]][1], s.cmpos[idx[2]][2]))
+                    print("s.cmvel = %9.5f, %9.5f, %9.5f" %
+                          (cmvel[0], cmvel[1], cmvel[2]))
+                    print("s.cmacc = %9.5f, %9.5f, %9.5f" %
+                          (cmacc[0], cmacc[1], cmacc[2]))
+            s.knt += 1
+            s.cmvel = cmvel
+            s.cmacc = cmacc
+
+    def updateFrameSolidsPosVelAccFiltered(self, t, tstep):
+        """
+        Update frame solids position data points and use to estimate updated
+        velocity and acceleration with expressions tailored to one, two and
+        three position samples, and utilizing a three element circlar buffer.
+
+        :param t: simulation time
+        :param tstep: simulation time step
+        :return: none
+        """
+        # Estimate solid bodies center of mass velocity and acceleration based on
+        # G-H-K filter applied to center of mass position samples.
+        # ref:  https://www.kalmanfilter.net/alphabeta.html#ex4
+        alpha = 0.50   # filter position alpha (G) coefficient
+        beta = 0.25    # filter velocity beta (H) coefficient
+        gamma = 0.125  # filter acceleration gammm (K) coefficient
+        KIDX = [(0, 1, 2),
+                (1, 2, 0),
+                (2, 0, 1)]  # cmpos circular buffer indexes for update count+1 modulo 3
+        # Loop over all frame solids
+        for s in self.solids:
+            cmpos = s.body.getPosition()
+            if s.knt == 0:
+                # initialize
+                s.t0 = t
+                s.cmpos[0] = cmpos
+                cmvel = (0.0, 0.0, 0.0)
+                cmacc = (0.0, 0.0, 0.0)
+            elif s.knt == 1:
+                # use 2-point difference expressions
+                pdiff = vecSub(cmpos, s.cmpos[0])
+                s.cmpos[1] = vecAdd(s.cmpos[0], vecMulS(pdiff, alpha))
+                cmvel = vecAdd(s.cmvel, vecMulS(vecDivS(pdiff, tstep), beta))
+                cmacc = vecAdd(s.cmacc, vecMulS(vecDivS(pdiff, 0.5 * tstep * tstep), gamma))
+            else:
+                # use 3-point central difference method
+                k = (s.knt + 1) % 3
+                idx = (int(KIDX[k][0]), int(KIDX[k][1]), int(KIDX[k][2]))
+                s.cmpos[idx[2]] = vecAdd(s.cmpos[idx[1]], vecMulS(vecSub(cmpos, s.cmpos[idx[1]]), alpha))
+                cmvel = vecDivS(vecSub(cmpos, s.cmpos[idx[0]]), 2 * tstep)
+                cmvel = vecAdd(s.cmvel, vecMulS(cmvel, beta))
+                cmacc = vecDivS(vecSub(vecAdd(cmpos, s.cmpos[idx[0]]), vecMulS(s.cmpos[idx[1]], 2)),
+                                tstep * tstep)
+                cmacc = vecAdd(s.cmacc, vecMulS(cmacc, gamma))
                 if self.figure.actions.debug and s.label == "pelvis":
                     print("%s: knt = %4d  k = %1d  idx = %1d, %1d, %1d" %
                           (s.label, s.knt, k, idx[0], idx[1], idx[2]))

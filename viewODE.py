@@ -129,7 +129,7 @@ def resetSim(mode):
     @param mode: Enumeration of a reset mode.
     @type mode: int
     """
-    global RESET_MODE, PAUSE
+    global RESET_MODE, PAUSE, ACTIONS_LIST
     global ode_contactgroup
     global state
     global ode_world
@@ -144,6 +144,8 @@ def resetSim(mode):
     if mode == RESET_MODE['hard']:
         # Reset world gravity vector
         ode_world.setGravity((0.0, -9.81, 0.0))
+        # Empty ACTIONS_LIST
+        ACTIONS_LIST = []
         # Reset figure configuration
         print(" ")
         print("**** Figure Configuration Reset ****")
@@ -444,7 +446,7 @@ def _idlefunc():
     This method is passed to the Render class constructor in order to be
     registered as the glutIdleFunc callback.
     """
-    global PAUSE, GRAV_FIXED
+    global PAUSE, GRAV_FIXED, ACTIONS_TIME, ACTIONS_LIST
     global renderer, frame_rate
     global ode_world, ode_space, ode_contactgroup
     global figure, target
@@ -456,6 +458,11 @@ def _idlefunc():
         time.sleep(t_wait)
 
     if not PAUSE:
+
+        # Apply option list actions when settling period of dt seconds ends
+        if ACTIONS_LIST and (abs(t - ACTIONS_TIME) < tstep):
+            for act in ACTIONS_LIST:
+                _keyfunc(act.encode(), 0, 0)
 
         # State 0: Create ODE figure and target
         if state == 0:
@@ -565,6 +572,11 @@ if __name__ == '__main__':
         tstop = float(argv[1])
     tstop_msec = tstop * 1000.0
 
+    OPTIONS_LIST = []
+    if len(argv) > 2:
+        OPTIONS_LIST = argv[2].split(':')
+    print("OPTIONS_LIST=", OPTIONS_LIST)
+
     # ODE simulation loop timing, counters and state
     PAUSE = True
     fps = 100
@@ -618,6 +630,20 @@ if __name__ == '__main__':
     sfac = 1.0
     figure = Figure(ode_world, ode_space, floor, sfac)
     target = None
+
+    ACTIONS_TIME = 99999.0
+    ACTIONS_LIST = []
+    if len(OPTIONS_LIST) > 0:
+        n = 0
+        for opt in OPTIONS_LIST:
+            _keyfunc(opt.encode(), 0, 0)
+            n += 1
+            if opt == 'z' or opt == 'Z':
+                break
+        if len(OPTIONS_LIST[n:]) >= 2:
+            ACTIONS_TIME = float(OPTIONS_LIST[n])
+            ACTIONS_LIST = OPTIONS_LIST[n+1:]
+    print("ACTIONS_TIME, ACTIONS_LIST=", ACTIONS_TIME, ACTIONS_LIST)
 
     # Print rendering, physical and dynamics configurations
     printConfig()

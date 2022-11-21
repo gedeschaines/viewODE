@@ -719,6 +719,11 @@ class Figure:
         self.updateCenterOfMassPosVelAcc(t, tstep)
 
         # Update figure's frame solids position, velocity and acceleration.
+        #
+        # NOTE: Attempts to use G-H-K filtering for CoM position, velocity
+        # and acceleration estimations presently introduces unconstrained
+        # growth in the z-component of calculated ZMP.
+        # self.frame.updateFrameSolidsPosVelAccFiltered(t, tstep)
         self.frame.updateFrameSolidsPosVelAcc(t, tstep)
 
         if not self.frame.joints:

@@ -5,21 +5,21 @@
 # starting in directory containing the viewODE.py file:
 #
 #   $ mkdir zout (if it does not already exist)
-#   $ python3 viewODE.py 5.0 1>zout/stride_action_output.txt
-#   $ Z
-#   $ H
-#   $ Y
-#   $ W
+#   $ python3 viewODE.py 6.0 H:D:Z:0.5:Y:W 1>zout/stride_action_output.txt
 #
 # then change to zout subdirectory and invoke this script:
 #
 #   $ cd zout
 #   $ ../util/extract_stride_action_data.sh
 #
-# Use gnuplot to display tride right and left leg joint action data:
+# Use gnuplot to display stride right and left leg motor action data:
 #
 #   $ gnuplot -p right_leg_gnuplot.dat
 #   $ gnuplot -p left_leg_gnuplot.dat
+#
+# NOTE: The previous two steps are performed by executing
+# the ./util/gnuplot_stride_action_data.sh script from
+# within the ./zout subdirectory.
 
 ACTION_DATA_TXT_FILE=stride_action_output.txt
 
