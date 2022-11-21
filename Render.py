@@ -136,7 +136,7 @@ class Render:
 
         # Create display lists
 
-        self.floor_grid = self.gridDisplayList(8, 8)
+        self.floor_grid = self.gridDisplayList(10, 10)
         self.world_axes = self.axesDisplayList()
 
     def debugOn(self):
