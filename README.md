@@ -1,8 +1,17 @@
 ## README ##
 
+ <div style="margin:0px;align=center">
+
+  |                          | Animation Walking Damped |                          |
+  | ------------------------ | ------------------------ | ------------------------ |
+  | <a href="https://youtu.be/-bKMD1JMYPE" target="_blank"><img src="./docs/anim_walking_damped_0000.jpg" width="400" height="300" alt="Animation walking damped video frame 0"/></a> | <a href="https://youtu.be/-bKMD1JMYPE" target="_blank"><img src="./docs/anim_walking_damped_0040.jpg" width="400" height="300" alt="Animation walking damped video frame 40"/></a> | <a href="https://youtu.be/-bKMD1JMYPE" target="_blank"><img src="./docs/anim_walking_damped_0080.jpg" width="400" height="300" alt="Animation walking damped video frame 80"/></a> |
+  | Frame 0 | Frame 40 | Frame 80 |
+
+ </div>
+
 ### viewODE ###
- 
-A Python program to view and control a simulated humanoid robotic figure using PyODE for modeling articulated rigid body dynamics, PyOpenGL for 3D rendering and Pillow (PIL) for image capture and conversion. The program was developed as a simplistic virtual dynamics environment to explore the capabilities of the Open Dynamics Engine (ODE) library in modeling a rudimentary humanoid robot and is not intended to be a robust robot simulation, development and experimentation tool such as [V-REP](http://www.coppeliarobotics.com/index.html), [GAZEBO](http://gazebosim.org/), [ROBOPY](https://github.com/adityadua24/robopy) or [pybotics](https://github.com/nnadeau/pybotics).
+
+A Python program to view and control a simulated humanoid robotic figure using PyODE for modeling articulated rigid body dynamics, PyOpenGL for 3D rendering and Pillow (PIL) for image capture and conversion. The program was developed as a simplistic virtual dynamics environment to explore the capabilities of the Open Dynamics Engine (ODE) library in modeling a rudimentary humanoid robot and is not intended to be a robust robot simulation, development and experimentation tool such as [V-REP](http://www.coppeliarobotics.com/index.html), [GAZEBO](http://gazebosim.org/), [RoboPy](https://github.com/adityadua24/robopy) or [Pybotics](https://github.com/nnadeau/pybotics). Inspiration for its development began from Matt Heinzen's [PyODE Ragdoll Physics Tutorial](http://monsterden.net/software/ragdoll-pyode-tutorial) and initial development effort was coincident with, but independent of, related research being conducted by the character animation group at University of British Columbia (UBC) on their [Simbicon](https://www.cs.ubc.ca/~van/papers/Simbicon.htm) and [Cartwheel 3D](https://code.google.com/archive/p/cartwheel-3d/) projects.
 
 ### Repository Directory Structure ###
 
