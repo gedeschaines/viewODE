@@ -75,7 +75,7 @@ The **viewODE** program presents an interactive display for three-dimensional (3
 ### Support ###
 
 * For install or usage issues concerning ODE and PyODE, consult the appropriate document, wiki, forum or mailing list provided at the SourceForge projects for [Open Dynamics Engine](https://sourceforge.net/projects/opende/) and [Python-ODE Bindings](https://sourceforge.net/projects/pyode/) or at the original [ODE](http://ode.org/) and [PyODE](http://pyode.sourceforge.net/) websites. Providers of distribution packages for ODE and PyODE may also be helpful in resolving installation issues.
-* For guidance on exploring the features and capabilites of **viewODE**, consult the howto tutorials provided in the **./docs** subdirectory.
+* For guidance on exploring the features and capabilities of **viewODE**, consult the howto tutorials provided in the **./docs** subdirectory.
 
 ### Disclaimers ###
 
