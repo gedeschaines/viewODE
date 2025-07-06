@@ -594,7 +594,7 @@ class Render:
             self.rotate = True
             self.last_x = mx
             self.last_y = my
-        elif b == GLUT_MIDDLE_BUTTON and s == GLUT_UP:
+        elif (b == GLUT_MIDDLE_BUTTON) and (s == GLUT_UP):
             got = True
             self.rotate = False
 

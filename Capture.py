@@ -3,6 +3,10 @@
 # Captures framebuffer images.
 #
 # Originally by Gary Deschaines, 2009.
+#
+# Disclaimers
+#
+#   See the file DISCLAIMER-GaryDeschaines
 
 from __future__ import print_function
 from sys import exit, stderr

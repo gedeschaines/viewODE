@@ -13,7 +13,7 @@
 # Disclaimers
 #
 #   See the file DISCLAIMER-GaryDeschaines
-#   See the file DISCLAIMER-MatHeinzen
+#   See the file DISCLAIMER-MattHeinzen
 
 from math import isinf, isnan, pi, sqrt, acos, atan2
 

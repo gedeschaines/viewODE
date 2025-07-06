@@ -13,7 +13,7 @@
 # Disclaimers
 #
 #   See file DISCLAIMER-GaryDeschaines
-#   See file DISCLAIMER-MatHeinzen
+#   See file DISCLAIMER-MattHeinzen
 
 from __future__ import print_function
 from sys import exit, modules, stderr
